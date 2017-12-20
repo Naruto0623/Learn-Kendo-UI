@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>filter</title>
+	<link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css" />
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+</head>
+<body>
+	<div id="grid"></div>
+<script>
+    $("#grid").kendoGrid({
+        columns: [
+            {
+                field: "name",
+                //filterable对象，过虑功能的总开关，值为true时开启，默认值为true，只针对当前列
+                filterable: {
+                    //过滤显示的单元格，只有当mode的值为row时才可用
+                    cell: {
+                        enabled: true,//是否可用的开关
+
+                        //自动完成数据源
+                        dataSource: new kendo.data.DataSource({
+                            data: [
+                                { someField: "Jane" },
+                                { someField: "Jake" },
+                                { someField: "John" }
+                            ]
+                        }),
+                        dataTextField: "someField",//自动完成要显示的数据源列，与上面配合使用
+                        delay: 1500,//自动完成激活的时间延迟
+                        minLength: 3,//自动完成激活的最少字符数，当该格式（DataSource中schema中设置）为string时
+                        suggestionOperator: "contains",//自动完成选择时的默认操作
+
+                        inputWidth: 100,//条件输入框的宽度，受所在列宽限制
+
+                        showOperators: false,//是否显示过滤按钮
+                        operator: "contains",//过滤按钮的默认操作
+                        //过滤的显示模板，element是过滤单元格，在里面加其他元素，dataSource是grid的dataSource，但是只包含数据，不像在grid中使用时带有自动赋予的唯一值，自动完成也是可以使用的
+                        template: function (args) {
+                            // create a DropDownList of unique values (colors)
+                            args.element.kendoDropDownList({
+                                dataSource: args.dataSource,
+                                dataTextField: "color",
+                                dataValueField: "color",
+                                valuePrimitive: true
+                            });
+                            // or
+                            // create a ColorPicker
+                            // args.element.kendoColorPicker();
+                        },
+                        //是一个方法function，或者kendo的组件
+                        ui: "datetimepicker" // use Kendo UI DateTimePicker
+                        //ui: function (element) {
+                        //    element.kendoDateTimePicker(); // initialize a Kendo UI DateTimePicker
+                        //}
+                    }
+                }
+            },
+            { field: "age" }
+        ],
+        //filterable对象，过虑功能的总开关，值为true时开启，默认值为false，控制所有列
+        filterable: {
+            extra: false,//是否双过滤条件，默认为true
+            //过滤弹窗上显示的文字，都是可定制的
+            messages: {
+                info: "Filter by: ",//顶端提示信息
+                and: "and",
+                or: "or",
+                filter: "Apply filter",//过滤按钮
+                clear: "Clear filter",//清空按钮
+
+                isFalse: "False",//过滤条件radio按钮的显示文字，当field设置type（DataSource中的schema中设置）: "boolean"时，可设此值
+                isTrue: "True",//同上
+
+                selectValue: "-Select value-",//过滤条件下拉按钮dropdownlist首项的显示文字，当field的值为枚举型时，设置values: [{ text: Beverages", value: 1 },{ text: "Food", value: 2 },]，可设此值
+
+                cancel: "Cancel",//返回按钮的显示文字，只有当grid的option设置mobile: "phone"时，可设此值
+                operator: "Operator",//选择操作前标签的显示文字，条件与上同
+                value: "Value",//值输入前标签的显示文字，条件与上同
+
+                //条件运算符的显示文字，具体使用取决于field设置的type
+                operators: {
+                    //字符串型
+                    string: {
+                        eq: "Is equal to",
+                        neq: "Is not equal to",
+                        startswith: "Starts with",
+                        contains: "Contains",
+                        doesnotcontain: "Doesn't contain",
+                        endswith: "Ends"
+                    },
+                    //数值型
+                    number: {
+                        eq: "Equal to",
+                        neq: "Not equal to",
+                        gte: "Greater than or equal to",//大于等于
+                        gt: "Greater than",//大于
+                        lte: "Less than or equal to",//小于等于
+                        lt: "Less than"//小于
+                    },
+                    //日期型
+                    date: {
+                        gt: "After",
+                        lt: "Before",
+                        eq: "Equal",
+                        neq: "Not equal",
+                        gte: "After or equal to",
+                        lte: "Before or equal to"
+                    },
+                    //枚举型，
+                    enums: {
+                        eq: "Equal to",
+                        neq: "Not equal to"
+                    }
+                },
+
+                mode: "menu"//过滤的显示方式，可选值有"row"、"menu"、"menu, row"，row是标题行下加过滤单元格，menu是菜单
+            }
+        },
+        dataSource: {
+            data:[
+                { name: "Jane Doe", age: 30 },
+                { name: "John Doe", age: 33 }],
+            schema: {
+              model: {
+                fields: {
+                  name: { type: "string" }
+                }
+              }
+            }
+        }
+    });
+</script>
+</body>
+</html>

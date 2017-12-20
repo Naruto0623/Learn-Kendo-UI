@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base href="https://demos.telerik.com/kendo-ui/treeview/checkboxes">
+    <meta charset="utf-8" />
+    <title>Tree</title>
+    <!-- <base href="http://demos.telerik.com/kendo-ui/treeview/filter-treeview-in-dialog"> -->
+    <style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    html .k-dialog .k-window-titlebar {
+        padding-left: 17px;
+    }
+
+    .k-dialog .k-content {
+        padding: 17px;
+    }
+
+    #filterText {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 6px;
+        border-radius: 3px;
+        border: 1px solid #d9d9d9;
+    }
+
+    .selectAll {
+        margin: 17px 0;
+    }
+
+    #result {
+        color: #9ca3a6;
+        float: right;
+    }
+
+    #treeview {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #d9d9d9;
+    }
+
+    #openWindow {
+        min-width: 180px;
+    }
+    </style>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.3.1026/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.3.1026/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.3.1026/styles/kendo.material.mobile.min.css" />
+    <script src="https://kendo.cdn.telerik.com/2017.3.1026/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2017.3.1026/js/kendo.all.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+    <style>
+    .texCenter {
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- <div class="demo-section k-content">
+            <div id="dialog">
+                <div class="dialogContent">
+                    <input id="filterText" type="text" placeholder="Search categories" />
+                    <div class="selectAll">
+                        <input type="checkbox" id="chbAll" class="k-checkbox" onchange="chbAllOnChange()" />
+                        <label class="k-checkbox-label" for="chbAll">Select All</label>
+                        <span id="result">0 categories selected</span>
+                    </div>
+                    <div id="treeview"></div>
+                </div>
+            </div>
+            <select id="multiselect"></select>
+            <br />
+            <button id="openWindow" class="k-primary">SELECT CATEGORIES</button>
+        </div> -->
+        <div class="demo-section k-content">
+        <div>
+            <h4>Check nodes</h4>
+            <div id="treeview"></div>
+        </div>
+        <!-- <div style="padding-top: 2em;">
+            <h4>Status</h4>
+            <p id="result">No nodes checked.</p>
+        </div> -->
+    </div>
+    </div>
+    <script>
+    var App = new Vue({
+        el: '#app',
+        data: {
+            myDataSource: [{
+                    id: 1,
+                    text: "Furniture",
+                    expanded: true,
+                    items: [
+                        { id: 2, text: "tables & chairs" },
+                        { id: 3, text: "sofas" },
+                        { id: 4, text: "occasional furniture" },
+                        { id: 5, text: "childrens furniture" },
+                        { id: 6, text: "beds" }
+                    ]
+                },
+                {
+                    id: 7,
+                    text: "Decor",
+                    expanded: true,
+                    items: [
+                        { id: 8, text: "bed linen" },
+                        { id: 9, text: "throws" },
+                        { id: 10, text: "curtains & blinds" },
+                        { id: 11, text: "rugs" },
+                        { id: 12, text: "carpets" }
+                    ]
+                },
+                {
+                    id: 13,
+                    text: "Storage",
+                    expanded: true,
+                    items: [
+                        { id: 14, text: "wall shelving" },
+                        { id: 15, text: "kids storage" },
+                        { id: 16, text: "multimedia storage" },
+                        { id: 17, text: "floor shelving" },
+                        { id: 18, text: "toilet roll holders" },
+                        { id: 19, text: "storage jars" },
+                        { id: 20, text: "drawers" },
+                        { id: 21, text: "boxes" }
+                    ]
+                }
+            ]
+        },
+        mounted: function() {
+            // this.treeview();
+            this.treelist();
+        },
+        methods: {
+          treelist: function() {
+            $("#treeview").kendoTreeView({
+              check: false,
+              select: this.onSelect,
+              change: this.onChange,
+              dataSource: [{
+                  id: 1,
+                  text: "My Documents",
+                  expanded: true,
+                  spriteCssClass: "rootfolder",
+                  items: [{
+                          id: 2,
+                          text: "Kendo UI Project",
+                          expanded: true,
+                          spriteCssClass: "folder",
+                          items: [
+                              { id: 3, text: "about.html", spriteCssClass: "html" },
+                              { id: 4, text: "index.html", spriteCssClass: "html" },
+                              { id: 5, text: "logo.png", spriteCssClass: "image" }
+                          ]
+                      },
+                      {
+                          id: 6,
+                          text: "New Web Site",
+                          expanded: true,
+                          spriteCssClass: "folder",
+                          items: [
+                              { id: 7, text: "mockup.jpg", spriteCssClass: "image" },
+                              { id: 8, text: "Research.pdf", spriteCssClass: "pdf" },
+                          ]
+                      },
+                      {
+                          id: 9,
+                          text: "Reports",
+                          expanded: true,
+                          spriteCssClass: "folder",
+                          items: [
+                              { id: 10, text: "February.pdf", spriteCssClass: "pdf" },
+                              { id: 11, text: "March.pdf", spriteCssClass: "pdf" },
+                              { id: 12, text: "April.pdf", spriteCssClass: "pdf" }
+                          ]
+                      }
+                  ]
+              }]
+            });
+          },
+          onSelect:function(e) {
+            debugger;
+            var treeview = $("#treeview").data("kendoTreeView");
+            var dataItem = treeview.dataItem(e.node);
+            alert(dataItem.id); // displays "foo"
+            alert(dataItem.text); // displays "foo"
+            alert(treeview.text(e.node))
+            // console.log("Selecting: " + treeview.text(e.node));
+          },
+          onChange:function(e) {
+            // debugger;
+          },
+          // treeview: function() {
+          //     $("#multiselect").kendoMultiSelect({
+          //         dataTextField: "text",
+          //         dataValueField: "id"
+          //     });
+
+          //     $("#treeview").kendoTreeView({
+          //         loadOnDemand: false,
+          //         checkboxes: {
+          //             checkChildren: true
+          //         },
+          //         dataSource: this.myDataSource,
+          //         check: this.onCheck,
+          //         expand: this.onExpand
+          //     });
+
+          //     var dialog = $("#dialog");
+          //     var multiSelect = $("#multiselect").data("kendoMultiSelect");
+          //     $("#openWindow").kendoButton();
+          //     multiSelect.readonly(true);
+          //     $("#openWindow").click(function() {
+          //         dialog.data("kendoDialog").open();
+          //         $(this).fadeOut();
+          //     });
+          //     dialog.kendoDialog({
+          //         width: "400px",
+          //         title: "资产类别",
+          //         visible: false,
+          //         actions: [{
+          //                 text: '取消',
+          //                 primary: false,
+          //                 action: this.onCancelClick
+          //             },
+          //             {
+          //                 text: '确认',
+          //                 primary: true,
+          //                 action: this.onOkClick
+          //             }
+          //         ],
+          //         close: this.onClose
+          //     }).data("kendoDialog").open();
+          // },
+          onCancelClick: function(e) {
+              e.sender.close();
+          },
+
+          onOkClick: function(e) {
+              var checkedNodes = [];
+              var treeView = $("#treeview").data("kendoTreeView");
+              this.getCheckedNodes(treeView.dataSource.view(), checkedNodes);
+              this.populateMultiSelect(checkedNodes);
+              e.sender.close();
+          },
+
+          onClose: function() {
+              $("#openWindow").fadeIn();
+          },
+
+          populateMultiSelect: function(checkedNodes) {
+              debugger
+              var multiSelect = $("#multiselect").data("kendoMultiSelect");
+              multiSelect.dataSource.data([{ id: 2, text: "tables & chairs" }]);
+              var multiData = multiSelect.dataSource.data();
+              if (checkedNodes.length > 0) {
+                  var array = multiSelect.value().slice();
+                  for (var i = 0; i < checkedNodes.length; i++) {
+                      multiData.push({ text: checkedNodes[i].text, id: checkedNodes[i].id });
+                      array.push(checkedNodes[i].id.toString());
+                  }
+                  multiSelect.dataSource.data(multiData);
+                  multiSelect.dataSource.filter({});
+                  multiSelect.value(array);
+              }
+          },
+
+          checkUncheckAllNodes: function(nodes, checked) {
+              for (var i = 0; i < nodes.length; i++) {
+                  nodes[i].set("checked", checked);
+                  if (nodes[i].hasChildren) {
+                      checkUncheckAllNodes(nodes[i].children.view(), checked);
+                  }
+              }
+          },
+          chbAllOnChange: function() {
+              var checkedNodes = [];
+              var treeView = $("#treeview").data("kendoTreeView");
+              var isAllChecked = $('#chbAll').prop("checked");
+              checkUncheckAllNodes(treeView.dataSource.view(), isAllChecked)
+              if (isAllChecked) {
+                  this.setMessage($('#treeview input[type="checkbox"]').length);
+              } else {
+                  this.setMessage(0);
+              }
+          },
+
+          getCheckedNodes: function(nodes, checkedNodes) {
+              var node;
+              for (var i = 0; i < nodes.length; i++) {
+                  node = nodes[i];
+                  if (node.checked) {
+                      checkedNodes.push({ text: node.text, id: node.id });
+                  }
+                  if (node.hasChildren) {
+                      this.getCheckedNodes(node.children.view(), checkedNodes);
+                  }
+              }
+          },
+
+          onCheck: function() {
+            debugger;
+              var checkedNodes = [];
+              var treeView = $("#treeview").data("kendoTreeView");
+              this.getCheckedNodes(treeView.dataSource.view(), checkedNodes);
+              this.setMessage(checkedNodes.length);
+          },
+
+          onExpand: function(e) {
+              if ($("#filterText").val() == "") {
+                  $(e.node).find("li").show();
+              }
+          },
+          setMessage: function(checkedNodes) {
+              var message;
+              if (checkedNodes > 0) {
+                  message = checkedNodes + " categories selected";
+              } else {
+                  message = "0 categories selected";
+              }
+              $("#result").html(message);
+          }
+        }
+    })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Grid-Vue</title>
+
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.mobile.all.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-popups-vue-wrapper/dist/cdn/kendo-popups-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-grid-vue-wrapper/dist/cdn/kendo-grid-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
+</head>
+<body>
+    <div id="example">
+        <div id="app">
+            <kendo-datasource ref="kendoDataSource"
+                      :transport-read-url="'http://123.56.187.202:8069/api/AssetInfo/List'"
+                      :transport-read-data-type="'json'"
+                      :transport-read-data-contentType="'application/json;charset=utf-8'"
+                      :transport-read-type="'post'"
+                      :serverPaging="'true'"
+                      :serverSorting="'true'"
+                      :serverFiltering="'true'"
+                      :transport-parameter-map="parameterMap"
+                      :transport-parameter-schema="schema"
+                      :schema-model-id="'orderid'"
+                      :batch='true'
+                      :page-size='5'>
+            </kendo-datasource>
+            <kendo-grid 
+                        :data-source-ref="'kendoDataSource'"
+                        :pageable='pageables'
+                        :filterable="{ multi: true, search:true }"
+                        :sortable='true'
+                        :selectable="true"
+                        :column-menu='true'
+                        :columns="columns"
+                        :sort="sort"
+                        :page="page"
+                        :filter='filter'
+                        :edit='edit'
+                        :change='select'>
+            </kendo-grid>
+        </div>
+    </div>
+
+    <script>
+    new Vue({
+        el: '#app',
+        data: {
+            listData: [],
+            schema: {
+              //  前端自定义转化后端接口数据
+              parse: function (response) {
+                var products = response.data.data.godownentryform;
+                return products;
+              },
+              //总条数
+              total: function(d) {
+                return task_counts;
+                //return 100000000000;   //总条数
+              }
+            },
+            pageables: {
+            	input: true,
+                numeric: true,
+                refresh: true,
+                pageSizes: [2, 5, 10, 50],
+                messages: {
+                    display: "{0} - {1} 共 {2} 条数据",
+                    empty: "没有数据",
+                    page: "页",
+                    of: "/ {0}",
+                    itemsPerPage: "条每页",
+                    first: "第一页",
+                    previous: "前一页",
+                    next: "下一页",
+                    last: "最后一页",
+                }
+            },
+            columns: [
+                {
+                  selectable: "row",
+                  width: "50px"
+                },
+                {
+                  title: "资产类别",
+                  field: "categoryid",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "资产名称",
+                  field: "assetname",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "资产编码",
+                  field: "assetscoding",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "入库单号",
+                  field: "orderid",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "二维码ID",
+                  field: "assetqrcode",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "SN号",
+                  field: "snno",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "使用部门",
+                  width: "100px;",
+                  field: "department",
+                  style: ""
+                },
+                {
+                  title: "使用地",
+                  field: "useto",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "现使用人",
+                  field: "usename",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "入库日期",
+                  field: "inbounddate",
+                  style: "text-align:center",
+                  width: "100px;"
+                },
+                {
+                  title: "操作时间",
+                  field: "createdate",
+                  style: "text-align:center",
+                  width: "100px;"
+                }
+            ]
+        },
+        created: function() {
+            
+        },
+        mounted: function() {
+            
+        },
+        methods: {
+            total(d){
+                // debugger;
+                var count = d.count;
+            },
+            parameterMap: function (options, operation) {
+                // debugger;
+                if (operation !== 'read' && options.models) {
+                    return { models: kendo.stringify(options.models) }
+                }
+            },
+            sort: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+            	alert('排序回调');
+            },
+            page: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('分页回调');
+            },
+            filter: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('过滤回调');
+            },
+            edit: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('编辑回调');
+            },
+            select: function(options) {
+                console.log(options);
+                var selectList = [];
+                // debugger;
+                selectList = options.sender.selectedKeyNames();
+                alert(selectList);
+            }
+        }
+    })
+    </script>
+</body>
+</html>

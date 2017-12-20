@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Grid-JQ</title>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div id="grid"></div>
+    </div>
+    <script id="choose" type="text/x-kendo-template">
+        
+        <input type="checkbox" name="" id="" v-model="selectList">
+    </script>
+    <script>
+    	window.onload = function() {
+    		$('#header-chb').change(function(ev) {
+    			debugger;
+	          var checked = ev.target.checked;
+	          $('.row-checkbox').each(function(idx, item){
+	            if(checked){
+	              if(!($(item).closest('tr').is('.k-state-selected'))) {
+	                $(item).click();
+	              }
+	            } else {
+	              if($(item).closest('tr').is('.k-state-selected')) {
+	                $(item).click();
+	              }
+	            }
+	          });
+	        });
+    	}
+    new Vue({
+        el: '#app',
+        data: {
+        	//选中行的id
+            selectList: [],
+            page: '',
+			pageSize: '',
+			//资产操作类型
+			type: 0
+        },
+        mounted: function() {
+        	this.list();
+        },
+        methods: {
+            list: function() {
+        		var Vue = this;
+	            var dataSource = new kendo.data.DataSource ({
+	            	serverPaging: true,       
+	              	serverSorting: true,     
+	              	serverFiltering: true,
+	              	pageSize: 5,
+	            	transport: {
+	            		read: {
+	            			url: "http://60.205.149.65:8004/api/Wangqiming/Lists",
+	            			// url: "http://123.56.187.202:8069/api/AcceptanceForm/SolrList",
+	            			// url: "http://10.116.67.12:65400/api/AcceptanceForm/SolrList",
+			                type: "post",
+			                dataType: "json",
+			                contentType: "application/json; charset=utf-8"
+	            		},
+	            		parameterMap: function (options, operation) {
+		                  if (operation == "read") {
+		                  	if(options.skip || options.pageSize){
+		                  		Vue.page = options.skip;
+								Vue.pageSize = options.pageSize;
+		                  	}
+		                    var parameter = {
+	                    		page: Vue.page,
+	                      		pageSize: Vue.pageSize,
+	                      		sort: options.sort,
+	                      		filter: options.filter,
+	                      		asset_type: Vue.type
+		                    };
+		                    return JSON.stringify(parameter);
+		                  }
+		                }
+	            	},
+	            	schema: {
+		                model: { 
+		                	id: "assetqrcode"
+		                },
+		                parse: function (res) {
+		                  var products = res;
+		                  return products;
+		                },
+		                //返回值
+		                data: function (res) {
+		                  // return res.data.results;
+		                  return res.results;
+		                },
+		                //总页数
+		                total: function (res) {
+		                  // return res.data.count;
+		                }
+		            }
+	            });
+	            $("#grid").kendoGrid({
+	            	dataSource: dataSource,
+	              	resizable: true,      //是否允许用户调整列宽
+	              	batch: true,          //是否可以批量处理
+	              	filter: this.filter,  //过滤回调函数
+	              	scrollable: true,    //是否有滚动条
+	              	persistSelection: true,       //是否有缓存
+	              	sortable: true,       //是否开启点击列标题排序功能
+	              	reorderable: true,     //是否允许用户自己调整列的顺序
+	              	// filterable: true,     //是否开启列表功能
+	              	noRecords: true,      //列表没有数据时列表中显示一个提示区域
+	              	height: 400,          //提示区域自定义大小
+	              	messages: {           //提示区域自定义文字
+	                	noRecords: "当前页面上没有数据"
+	              	},
+	              	pageable: {
+		                input: true,        //是否有页码输入框
+		                numeric: true,
+		                refresh: true,      //是否显示刷新按钮
+		                pageSize: 2,        //每页显示条数
+		                buttonCount: 3,       //显示页码数字，超出显示省略号
+		                pageSizes: [2, 5, 10, 50],      //可选则每页显示多少条
+		                messages: {
+		                  display: "{0} - {1} 共 {2} 条数据",
+		                  empty: "没有数据",
+		                  page: "页",
+		                  of: "/ {0}",
+		                  itemsPerPage: "条每页",
+		                  first: "第一页",
+		                  previous: "前一页",
+		                  next: "下一页",
+		                  last: "最后一页",
+		                }
+		            },
+		            columnMenu: {
+		                messages: {
+		                  sortAscending: "升序",
+		                  sortDescending: "降序",
+		                  columns: '列',
+		                  filter: '过滤',
+		                  sort: '排序'
+		                }
+		            },
+		            filterable: {
+		                'multi': true,      //行过滤时是否多选
+		                'checkAll': true,    //行过滤时是否可以全选
+		                'ui': "datetimepicker",    //时间过滤
+		                'messages': {
+		                  info: '显示符合一下条件的行',
+		                  cancel: "取消过滤",
+		                  and: "且",
+		                  or: "或",
+		                  filter: "过滤",
+		                  clear: "清除"
+		                }
+	              	},
+	              	change: function () {
+		                var selectList = this.selectedKeyNames ();
+		                Vue.selectList = selectList;
+		                console.log(selectList);
+	              	},
+	              	columns: [
+			          {
+			          	selectable: 'row',
+			          	width: "50px"
+			          },
+			          {
+			            title: "资产类别",
+			            field: "categoryid",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "资产名称",
+			            field: "assetname",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "资产编码",
+			            field: "assetscoding",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "入库单号",
+			            field: "orderid",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "二维码ID",
+			            field: "assetqrcode",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "SN号",
+			            field: "snno",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "使用部门",
+			            width: "100px;",
+			            field: "department",
+			            style: ""
+			          },
+			          {
+			            title: "使用地",
+			            field: "useto",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "现使用人",
+			            field: "usename",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "入库日期",
+			            field: "inbounddate",
+			            style: "text-align:center",
+			            width: "100px;"
+			          },
+			          {
+			            title: "操作时间",
+			            field: "createdate",
+			            style: "text-align:center",
+			            width: "100px;"
+			          }
+			        ]
+	            })
+            }
+        }
+    })
+    </script>
+</body>
+</html>

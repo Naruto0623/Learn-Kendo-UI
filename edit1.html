@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Edit</title>
+
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.mobile.all.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-datasource-vue-wrapper/dist/cdn/kendo-datasource-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-popups-vue-wrapper/dist/cdn/kendo-popups-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-buttons-vue-wrapper/dist/cdn/kendo-buttons-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-layout-vue-wrapper/dist/cdn/kendo-layout-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-window-vue-wrapper/dist/cdn/kendo-window-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dropdowns-vue-wrapper/dist/cdn/kendo-dropdowns-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dateinputs-vue-wrapper/dist/cdn/kendo-dateinputs-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-grid-vue-wrapper/dist/cdn/kendo-grid-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-upload-vue-wrapper/dist/cdn/kendo-upload-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-validator-vue-wrapper/dist/cdn/kendo-validator-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-inputs-vue-wrapper/dist/cdn/kendo-inputs-vue-wrapper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+</head>
+<body>
+  
+<div id="example">
+    <div id="app">
+        <kendo-datasource ref="kendoDataSource"
+                          :transport-read-url="'https://demos.telerik.com/kendo-ui/service/Products'"
+                          :transport-read-data-type="'jsonp'"
+                          :transport-update-url="'https://demos.telerik.com/kendo-ui/service/Products/Update'"
+                          :transport-update-data-type="'jsonp'"
+                          :change="select"
+                          :transport-destroy-url="'https://demos.telerik.com/kendo-ui/service/Products/Destroy'"
+                          :transport-destroy-data-type="'jsonp'"
+                          :transport-create-url="'https://demos.telerik.com/kendo-ui/service/Products/Create'"
+                          :transport-create-type="'post'"
+                          :transport-parameter-map="parameterMap"
+                          :schema-model-id="'ProductID'"
+                          :schema-model-fields="schemaModelFields"
+                          :batch='false'
+                          :page-size='5'>
+        </kendo-datasource>
+        <kendo-grid :height="250"
+                    :data-source-ref="'kendoDataSource'"
+                    :pageable='true'
+                    :navigatable='true'
+                    :editable='{mode: "popup"}'
+                    :toolbar="['create', 'save', 'cancel']">
+            <kendo-grid-column selectable='true' title="选择" width="250px"></kendo-grid-column>
+            <kendo-grid-column field="ProductName"></kendo-grid-column>
+            <kendo-grid-column field="UnitPrice" title="Unit Price" :width="120" :format="'{0:c}'"></kendo-grid-column>
+            <kendo-grid-column field="UnitsInStock" title="Units In Stock" :width="120"></kendo-grid-column>
+            <kendo-grid-column title="点击事件" :width="120" :editor="customBoolEditor"></kendo-grid-column>
+            <kendo-grid-column :command="['destroy','edit']" title="操作" width="250px"></kendo-grid-column>
+            <kendo-grid-column :command="['destroy','edit']" title="操作" width="250px"></kendo-grid-column>
+        </kendo-grid>
+        <!-- <div class="box wide">
+            <h4>CONFIGURATION</h4>
+            <form>
+                <span class="radio">
+                    <input type="radio" class="k-radio" name="editmode" value="incell" id="incell" v-on:change="handleOptionChange" checked="checked"/>
+                    <label class="k-radio-label" for="incell">Incell</label>
+                </span>
+                <span class="radio">
+                    <input type="radio" class="k-radio" name="editmode" value="inline" id="inline" v-on:change="handleOptionChange" />
+                    <label class="k-radio-label" for="inline">Inline</label>
+                </span>
+                <span class="radio">
+                    <input type="radio" class="k-radio" name="editmode" value="popup" id="popup" v-on:change="handleOptionChange" />
+                    <label class="k-radio-label" for="popup">Popup</label>
+                </span>
+            </form>
+        </div> -->
+    </div>
+</div>
+
+<script>
+    var oldMode = "incell";
+    new Vue({
+        el: '#app',
+        data: {
+            columns: [
+                // "订单列表",
+                { selectable:'true',width: '20px'},
+                { field: "assetname", title: "城市"},
+                { field: "assetqrcode", title:"订单编号"},
+                { field: "assetscoding",title:'客户名称'},
+                { field: "categoryid",title:'订单日期'},
+                { command: ['destroy','edit'],title:'操作'},
+                // { command: 'edit',editor:this.select,title:'操作'},
+            ],
+            aa: {
+                page: 1,
+                pageSize: 2
+            },
+            schemaModelFields: {
+                ProductID: { editable: false, nullable: true },
+                ProductName: { validation: { required: true } },
+                UnitPrice: { type: 'number', validation: { required: true, min: 1 } },
+                Discontinued: { type: 'boolean' },
+                UnitsInStock: { type: 'number',editable: false, nullable: true, validation: { min: 0, required: true } }
+                // UnitsInStock: {type: 'number',editable: false,nullable: true,}
+            }
+        },
+        methods: {
+            customBoolEditor: function (container, options) {
+                alert(2);
+                var guid = kendo.guid();
+                kendo.jQuery('<input class="k-checkbox" id="' + guid + '" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container)
+                kendo.jQuery('<label class="k-checkbox-label" for="' + guid + '">&#8203;</label>').appendTo(container);
+            },
+            parameterMap: function (options, operation) {
+                if (operation == "read") {
+                    var parameter = {
+                        page: 1,
+                        pageSize: 2,
+                        assetname: options.assetname,
+                        results: options.results
+                    };
+                    return parameter;
+                }
+            },
+            select: function() {
+                alert(2);
+            },
+            handleOptionChange: function (changeEvent) {
+                var columns = [
+                     "ProductName",
+                     { field: "UnitPrice", title: "Unit Price", format: "{0:c}", width: 120 },
+                     { field: "UnitsInStock", title: "Units In Stock", width: 120 },
+                     { field: "Discontinued", width: 120, editor: this.customBoolEditor }]
+
+                var inlineOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "inline" },
+                    columns: columns.concat([{ command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }]),
+                    toolbar: ["create"]
+                };
+
+                var incellOptions = {
+                    dataSource: { batch: true },
+                    editable: { mode: "incell" },
+                    columns: columns.concat([{ command: "destroy", title: "&nbsp;", width: 150 }]),
+                    toolbar: ["create", "save", "cancel"]
+                };
+
+                var popupOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "popup" },
+                    columns: columns.concat([{ command: ["edit", "destroy"],editor: this.customBoolEditor, title: "操作", width: "250px" }]),
+                    toolbar: ["create"]
+                };
+
+                var editOptions = {
+                    incell: incellOptions,
+                    inline: inlineOptions,
+                    popup: popupOptions
+                };
+
+                if (oldMode != changeEvent.currentTarget.value) {
+                    oldMode = changeEvent.currentTarget.value
+                    var editMode = changeEvent.currentTarget.value
+                    var grid = $("[data-role='grid']").data("kendoGrid")
+
+                    grid.setOptions($.extend({}, grid.getOptions(), editOptions[editMode]));
+                }
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

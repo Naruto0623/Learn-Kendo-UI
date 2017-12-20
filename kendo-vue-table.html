@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>kendo-vue-table</title>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.material.mobile.min.css" />
+
+    <script src="http://kendo.cdn.telerik.com/2017.3.1018/js/jquery.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.1018/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-all-vue-wrapper/dist/cdn/kendo-all-vue-wrapper.min.js"></script>
+</head>
+<body>
+	<!-- 
+		ref='listdata'			列表加载组件和绑定组件用一个名称绑定就可以
+		:transport-create-url   列表新建接口
+		:transport-destroy-url  列表删除接口
+		:transport-update-url	列表修改接口
+		:transport-read-url		列表所有数据加载接口
+		:transport-parameter-map="parameterMap"		
+		绑定列表状态切换函数 内置参数(options,operation)
+		:page-size='2'   		控制列表单页条数
+		:selectable				可以点选表格单条变蓝色
+		:pageable				控制分页显示与否
+		:filterable				控制表格过滤功能是否开启
+		:column-menu='false'	表格功能只有过滤功能
+		:sortable				控制表格开启排序功能
+		:scrollable-virtual     列表下拉滚动加载数据
+		:groupable				是否可以拖动并编组
+
+
+		:format="'{0:yyyy/dd/MM}'"
+		定义显示列
+		<kendo-grid-column 
+			field="OrderID" 	接口取值
+			title="OrderID" 	自定义标题
+			:filterable="{ 
+							multi: true, 	是否开启复选框搜索
+							search:true 	单列搜索功能
+						}"  
+						:groupable='true' 	是否可以拖动并编组
+						:width='120'>		设置单列宽度
+			</kendo-grid-column>
+
+		数据加载接口：https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders
+		传输方式：get
+		参数：
+		$callback:    jQuery191012606362485972755_1511248921592
+		$inlinecount: allpages		
+		$format:      json				返回数据格式
+		$top:         20				单页请求条数
+		$skip:        2					页码
+		$filter       (OrderID eq '102' and OrderID eq '10244')	条件搜索
+		$orderby:     OrderID			升序传 字段名
+		$orderby:     OrderID desc		降序传 字段名 + desc
+		参数可用地址栏拼接
+		
+		Add Kendo UI by installing the Kendo UI Professional NPM package
+		npm install --save @progress/kendo-ui
+
+		Add Kendo UI Theme by installing the Kendo UI Default Theme NPM package
+		npm install --save @progress/kendo-theme-default
+
+		Add the Kendo UI DateInput wrapper for Vue
+		npm install --save @progress/kendo-dateinputs-vue-wrapper
+		
+		vue中引入
+		import '@progress/kendo-ui'
+		import '@progress/kendo-theme-default/dist/all.css'
+		import { KendoCalendar } from '@progress/kendo-dateinputs-vue-wrapper'
+
+		表格组件的引入
+		import { KendoGrid, KendoGridInstaller } from '@progress/kendo-grids-vue-wrapper'
+		Vue.use(KendoGridInstaller)
+		new Vue({
+		  el: '#app',
+		  components: {
+		    KendoGrid
+		  }
+		})
+
+		通过将其注册为全局组件并将其添加到组件集合中
+		Vue.component(KendoCalendar.name, KendoCalendar)
+		new Vue({
+		  el: '#app',
+		  router,
+		  template: '<App/>',
+		  components: {
+		    App,
+		    KendoCalendar
+		  }
+		})
+		
+		可能不兼容IE11
+		npm install --save "babel-polyfill"
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+
+		重点，npm安装没有权限
+	 -->
+	<div id="example">
+	    <div id="app">
+	        <kendo-datasource ref="listdata"
+	                          :transport-read-url="'https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders'"
+	                          :transport-update-url="'https://demos.telerik.com/kendo-ui/service/Products/Update'"
+	                          :transport-destroy-url="'https://demos.telerik.com/kendo-ui/service/Products/Destroy'"
+	                          :transport-create-url="'https://demos.telerik.com/kendo-ui/service/Products/Create'"
+	                          :transport-read-data-type="'jsonp'"
+	                          :type="'odata'"
+	                          :schema-model-fields="schemaModelFields"
+	                          :page-size='2'
+	                          :server-sorting='true'
+	                          :server-paging='true'
+	                          :server-filtering='true'>
+	        </kendo-datasource>
+	        <kendo-grid :height="350"
+	                    :data-source-ref="'listdata'"
+	                    :column-menu='true'
+	                    :selectable='true'
+	                    :pageable='true'
+	                    :filterable='true'
+	                    :groupable='true'
+	                    :scrollable-virtual='false'
+	                    :sortable='true'>
+	            <kendo-grid-column field="ProductName"></kendo-grid-column>
+		        <kendo-grid-column field="UnitPrice" :filterable="{ multi: true,search:true
+						}"   title="Unit Price" :width="120" :format="'{0:c}'"></kendo-grid-column>
+		        <kendo-grid-column field="UnitsInStock" :filterable="{ multi: true,search:true
+						}"   title="Units In Stock" :width="120"></kendo-grid-column>
+		        <kendo-grid-column field="Discontinued" :filterable="{ multi: true,search:true}"   :width="120" :editor="customBoolEditor"></kendo-grid-column>
+		        <kendo-grid-column :command="['delet', 'destroy']" title="&nbsp;" width="250px"></kendo-grid-column>
+	        </kendo-grid>
+	    </div>
+	</div>
+
+    
+    <script>
+    	new Vue({
+        el: '#app',
+        data: {
+            schemaModelFields: {
+                OrderID: { type: 'string' },
+                ShipCountry: { type: 'string' },
+                ShipName: { type: 'string' },
+                ShipAddress: { type: 'string' }
+            },
+            localDataSource: [
+                {
+                	'flag': true,
+                    "assetsid": "7e28d461-c9cb-4aa1-8e0e-0ca3d854eb66",
+                    "assetsids": null,
+                    "assetscoding": "0130011",
+                    "assetqrcode": "000001001093",
+                    "categoryid": "11111113333",
+                    "assetname": "1212",
+                    "tenantid": "e93a1585-0ba6-429c-ad17-553d150217c0",
+                    "stateid": "17748c2e-8687-11e7-9b06-00163e06511f",
+                    "snno": "1212",
+                    "department": "IT",
+                    "useto": "北京",
+                    "usename": "121",
+                    "userstation": "",
+                    "suppliers": "123",
+                    "configuration": "1212",
+                    "purchasedate": "2017/10/27 19:22:27",
+                    "inbounddate": "2017/10/27 19:22:27",
+                    "original": "121",
+                    "assetvalue": "121",
+                    "depreciation": "1111",
+                    "smallvalue": "111",
+                    "imageupload": "\"u=4131634322,487666839&fm=27&gp=0.jpg\"",
+                    "imageuploadurl": "ezg.lenovo.com.cn:8001\\Uploa\\a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "imageuploadnew": "a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "remark": "1212",
+                    "customfield": "[{\"name\":\"测试\",\"value\":\"121\",\"type\":\"-1\",\"AssetsID\":null},{\"name\":\"测试\",\"value\":\"121\",\"type\":\"bfe2347f-91e8-11e7-a9c8-00163e102722\",\"AssetsID\":null}]",
+                    "createperson": null,
+                    "createdate": "2017-10-27 19:22:43",
+                    "updateperson": null,
+                    "updatedate": null,
+                    "deleteflag": null,
+                    "cleandate": null,
+                    "cleanby": null,
+                    "assetclasses": null,
+                    "returnid": null,
+                    "cleanid": null,
+                    "pagesize": null,
+                    "pageindex": null,
+                    "cleanreasons": null,
+                    "loginfoid": null,
+                    "godownentryid": null,
+                    "orderid": "RK171027072243887",
+                    "createname": null,
+                    "updatename": null,
+                    "newfield": null,
+                    "type": null,
+                    "list": null,
+                    "repairreason": null,
+                    "repairtype": null,
+                    "repairdate": "0001-01-01 00:00:00",
+                    "transferdate": "0001-01-01 00:00:00",
+                    "usedate": "0001-01-01 00:00:00",
+                    "error": null,
+                    "tenantname": null,
+                    "enterprisecode": null,
+                    "recipientsdate": null,
+                    "userrealname": null,
+                    "remarks": null
+                },
+                {
+                    "assetsid": "7e28d461-c9cb-4aa1-8e0e-0ca3d854eb66",
+                    "assetsids": null,
+                    "assetscoding": "0130012",
+                    "assetqrcode": "000001001093",
+                    "categoryid": "11111113333",
+                    "assetname": "1212",
+                    "tenantid": "e93a1585-0ba6-429c-ad17-553d150217c0",
+                    "stateid": "17748c2e-8687-11e7-9b06-00163e06511f",
+                    "snno": "1212",
+                    "department": "IT",
+                    "useto": "北京",
+                    "usename": "121",
+                    "userstation": "",
+                    "suppliers": "123",
+                    "configuration": "1212",
+                    "purchasedate": "2017/10/27 19:22:27",
+                    "inbounddate": "2017/10/27 19:22:27",
+                    "original": "121",
+                    "assetvalue": "121",
+                    "depreciation": "1111",
+                    "smallvalue": "111",
+                    "imageupload": "\"u=4131634322,487666839&fm=27&gp=0.jpg\"",
+                    "imageuploadurl": "ezg.lenovo.com.cn:8001\\Uploa\\a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "imageuploadnew": "a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "remark": "1212",
+                    "customfield": "[{\"name\":\"测试\",\"value\":\"121\",\"type\":\"-1\",\"AssetsID\":null},{\"name\":\"测试\",\"value\":\"121\",\"type\":\"bfe2347f-91e8-11e7-a9c8-00163e102722\",\"AssetsID\":null}]",
+                    "createperson": null,
+                    "createdate": "2017-10-27 19:22:43",
+                    "updateperson": null,
+                    "updatedate": null,
+                    "deleteflag": null,
+                    "cleandate": null,
+                    "cleanby": null,
+                    "assetclasses": null,
+                    "returnid": null,
+                    "cleanid": null,
+                    "pagesize": null,
+                    "pageindex": null,
+                    "cleanreasons": null,
+                    "loginfoid": null,
+                    "godownentryid": null,
+                    "orderid": "RK171027072243887",
+                    "createname": null,
+                    "updatename": null,
+                    "newfield": null,
+                    "type": null,
+                    "list": null,
+                    "repairreason": null,
+                    "repairtype": null,
+                    "repairdate": "0001-01-01 00:00:00",
+                    "transferdate": "0001-01-01 00:00:00",
+                    "usedate": "0001-01-01 00:00:00",
+                    "error": null,
+                    "tenantname": null,
+                    "enterprisecode": null,
+                    "recipientsdate": null,
+                    "userrealname": null,
+                    "remarks": null
+                }
+            ]
+        },
+        methods: {
+        	list: function() {
+        		console.log(3);
+        	},
+        	customBoolEditor: function(container, options) {
+        		debugger;
+                kendo.jQuery('<input class="k-checkbox" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container)
+                kendo.jQuery('<label class="k-checkbox-label">​</label>').appendTo(container)
+            },
+        	parameterMap: function(options, operation) {
+        		// debugger;
+                if (operation !== 'read' && options.models) {
+                    return { models: kendo.stringify(options.models) }
+                }
+            }
+        }
+    })
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="css/kendo.common.min.css">
+	<link rel="stylesheet" href="css/kendo.default.min.css">
+	<link rel="stylesheet" href="css/kendo.rtl.min.css">
+</head>
+<body>
+	<div id="example">
+	    <div id="app">
+	        <kendo-datasource ref="datasource1"
+	                          :transport-read-url="'https://demos.telerik.com/kendo-ui/service/Northwind.svc/Orders'"
+	                          :type="'odata'"
+	                          :schema-model-fields="schemaModelFields"
+	                          :page-size='30'
+	                          :server-sorting='true'
+	                          :server-paging='true'
+	                          :server-filtering='true'>
+	        </kendo-datasource>
+	        <kendo-grid :height="550"
+	                    :data-source-ref="'datasource1'"
+	                    :column-menu='true'
+	                    :selectable='true'
+	                    :pageable='true'
+	                    :filterable='true'
+	                    :groupable='true'
+	                    :sortable='true'>
+	            <kendo-grid-column field="OrderID" title="OrderID" :filterable="{ multi: true, search:true }"  :groupable='true' :width='120'></kendo-grid-column>
+
+	            <kendo-grid-column field="ShipCountry" title="Ship Country" :filterable="{ multi: true, search:true }" ></kendo-grid-column>
+
+	            <kendo-grid-column field="ShipName" title="Ship Name" :filterable="{ multi: true, search:true }" ></kendo-grid-column>
+	            
+	            <kendo-grid-column field="ShipAddress" title="ShipAddress" :filterable="{ multi: true, search:true }" ></kendo-grid-column>
+	        </kendo-grid>
+	    </div>
+	</div>
+	
+	<script src="js/jquery.min.js"></script>
+	<script src="js/kendo.all.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="js/kendo-all-vue-wrapper.min.js"></script>
+    <script>
+    	new Vue({
+        el: '#app',
+        data: {
+            schemaModelFields: {
+                OrderID: { type: 'number' },
+                ShipCountry: { type: 'string' },
+                ShipName: { type: 'string' },
+                ShipAddress: { type: 'string' }
+            }
+        }
+    })
+    </script>
+</body>
+</html>

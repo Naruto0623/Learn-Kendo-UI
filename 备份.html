@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base href="http://demos.telerik.com/kendo-vue-ui/wrappers/grid/combined-filter-menu">
+    <style>
+        html {
+            font-size: 14px;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <title></title>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.material.mobile.min.css" />
+
+    <script src="http://kendo.cdn.telerik.com/2017.3.1018/js/jquery.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.1018/js/kendo.all.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-all-vue-wrapper/dist/cdn/kendo-all-vue-wrapper.min.js"></script>
+
+</head>
+
+<body>
+    <div id="example">
+        <div id="app">
+              
+            <kendo-grid :data-source="localDataSource" @databinding="onDataBinding" @databound="onDataBound"
+            :column-menu='true'
+            :selectable='true'
+            :pageable='true'
+            :filterable='false'
+            :groupable='true'
+            :sortable='true'>
+                <kendo-grid-column field="assetsid"></kendo-grid-column>
+                <kendo-grid-column field="assetscoding" title="Unit Price" :width="120" :format="'{0:c}'"></kendo-grid-column>
+                <kendo-grid-column field="assetqrcode" title="Units In Stock" :width="120"></kendo-grid-column>
+            </kendo-grid>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                localDataSource: [{
+                    "assetsid": "7e28d461-c9cb-4aa1-8e0e-0ca3d854eb66",
+                    "assetsids": null,
+                    "assetscoding": "0130011",
+                    "assetqrcode": "000001001093",
+                    "categoryid": "11111113333",
+                    "assetname": "1212",
+                    "tenantid": "e93a1585-0ba6-429c-ad17-553d150217c0",
+                    "stateid": "17748c2e-8687-11e7-9b06-00163e06511f",
+                    "snno": "1212",
+                    "department": "IT",
+                    "useto": "北京",
+                    "usename": "121",
+                    "userstation": "",
+                    "suppliers": "123",
+                    "configuration": "1212",
+                    "purchasedate": "2017/10/27 19:22:27",
+                    "inbounddate": "2017/10/27 19:22:27",
+                    "original": "121",
+                    "assetvalue": "121",
+                    "depreciation": "1111",
+                    "smallvalue": "111",
+                    "imageupload": "\"u=4131634322,487666839&fm=27&gp=0.jpg\"",
+                    "imageuploadurl": "ezg.lenovo.com.cn:8001\\Uploa\\a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "imageuploadnew": "a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "remark": "1212",
+                    "customfield": "[{\"name\":\"测试\",\"value\":\"121\",\"type\":\"-1\",\"AssetsID\":null},{\"name\":\"测试\",\"value\":\"121\",\"type\":\"bfe2347f-91e8-11e7-a9c8-00163e102722\",\"AssetsID\":null}]",
+                    "createperson": null,
+                    "createdate": "2017-10-27 19:22:43",
+                    "updateperson": null,
+                    "updatedate": null,
+                    "deleteflag": null,
+                    "cleandate": null,
+                    "cleanby": null,
+                    "assetclasses": null,
+                    "returnid": null,
+                    "cleanid": null,
+                    "pagesize": null,
+                    "pageindex": null,
+                    "cleanreasons": null,
+                    "loginfoid": null,
+                    "godownentryid": null,
+                    "orderid": "RK171027072243887",
+                    "createname": null,
+                    "updatename": null,
+                    "newfield": null,
+                    "type": null,
+                    "list": null,
+                    "repairreason": null,
+                    "repairtype": null,
+                    "repairdate": "0001-01-01 00:00:00",
+                    "transferdate": "0001-01-01 00:00:00",
+                    "usedate": "0001-01-01 00:00:00",
+                    "error": null,
+                    "tenantname": null,
+                    "enterprisecode": null,
+                    "recipientsdate": null,
+                    "userrealname": null,
+                    "remarks": null
+                }]
+            },
+            methods: {
+                onDataBinding: function (ev) {
+                    console.log("Grid is binding!");
+                },
+                onDataBound: function (ev) {
+                    console.log("Grid is bound!");
+                },
+                showData: function () {
+                    var www = '';
+                    this.localDataSource = www;
+                }
+
+            },
+            created: function () {
+                //this.showData();
+            }
+        })
+    </script>
+
+</body>
+
+</html>

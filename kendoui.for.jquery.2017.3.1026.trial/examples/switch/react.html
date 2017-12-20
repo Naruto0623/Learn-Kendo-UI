@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Overview</title>
+    <meta charset="utf-8">
+    <link href="../content/shared/styles/examples-offline.css" rel="stylesheet">
+    <link href="../../styles/kendo.common.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.rtl.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.mobile.min.css" rel="stylesheet">
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/jszip.min.js"></script>
+    <script src="../../js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js" ></script>
+    <script src="https://unpkg.com/@progress/kendo-inputs-react-wrapper/dist/cdn/kendo-inputs-react-wrapper.min.js"></script>
+    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
+    <script src="../content/shared/js/console.js"></script>
+    <script>
+        
+    </script>
+    
+    
+</head>
+<body>
+    
+        <a class="offline-button" href="../index.html">Back</a>
+    
+    <div id="example">
+    <div class="demo-section k-content">
+        <div id="switch"></div>
+    </div>
+</div>
+
+<script type="text/jsx">
+    const Switch = KendoInputsReactWrapper.Switch;
+    const element = (
+    <div>
+        <button className="k-button" onClick={checkAll}>Check all</button>
+        <div className="settings-head"></div>
+        <ul>
+            <li>Notifications <Switch checked={true}/></li>
+            <li>Send notifications <Switch onLabel="Yes" offLabel="No"/></li>
+            <li>Display real name <Switch onLabel="Yes" offLabel="No"/></li>
+        </ul>
+    </div>
+    );
+
+    function checkAll(){
+        $("[data-role='switch']").each(function (index) {
+            $(this).data('kendoMobileSwitch').check(true);
+        });
+    }
+
+    ReactDOM.render(element, document.getElementById('switch'));
+</script>
+
+<style>
+     .k-button {
+        margin:10px;
+     
+    }
+
+    .demo-section ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    .demo-section ul li {
+        margin: 0;
+        padding: 10px 10px 10px 20px;
+        min-height: 28px;
+        line-height: 28px;
+        vertical-align: middle;
+        border-top: 1px solid rgba(128,128,128,.5);
+    }
+
+    .demo-section {
+        min-width: 220px;
+        margin-top: 50px;
+        padding: 0;
+    }
+
+   .demo-section ul li .km-switch {
+        float: right;
+    }
+
+    .settings-head {
+        height: 66px;
+        background: url('../content/web/switch/settings-title.png') no-repeat 20px 50% #2db245;
+    }
+</style>
+
+
+    
+</body>
+</html>

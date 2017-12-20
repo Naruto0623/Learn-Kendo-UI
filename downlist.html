@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Kendo UI Snippet</title>
+
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.mobile.all.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-datasource-vue-wrapper/dist/cdn/kendo-datasource-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-popups-vue-wrapper/dist/cdn/kendo-popups-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-buttons-vue-wrapper/dist/cdn/kendo-buttons-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-layout-vue-wrapper/dist/cdn/kendo-layout-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-window-vue-wrapper/dist/cdn/kendo-window-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dropdowns-vue-wrapper/dist/cdn/kendo-dropdowns-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dateinputs-vue-wrapper/dist/cdn/kendo-dateinputs-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-grid-vue-wrapper/dist/cdn/kendo-grid-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-upload-vue-wrapper/dist/cdn/kendo-upload-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-validator-vue-wrapper/dist/cdn/kendo-validator-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-inputs-vue-wrapper/dist/cdn/kendo-inputs-vue-wrapper.min.js"></script>
+</head>
+<body>
+  
+<div id="app">
+    <kendo-dropdownlist :value="modelValue"
+                        :data-source="dataSource"
+                        data-text-field="text"
+                        data-value-field="value"
+                        @change="onChange"></kendo-dropdownlist>
+    Model: <span v-text="model"></span>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            model: {text: "Text 1", value: "Value 1"},
+            dataSource: [
+              {text: "Text 1", value: "Value 1"},
+              {text: "Text 2", value: "Value 2"},
+              {text: "Text 3", value: "Value 3"}
+            ]
+        },
+      computed: {
+        modelValue: function () {
+            return this.model.value;
+        }
+      },
+      methods: {
+        onChange: function (ev) {
+          var selectedIndex = ev.sender.select();
+          var selectedItem = ev.sender.dataItem(selectedIndex).toJSON();
+          this.model = selectedItem;
+        }
+      }
+    })
+</script>
+</body>
+</html>

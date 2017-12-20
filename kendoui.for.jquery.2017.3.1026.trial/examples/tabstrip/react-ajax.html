@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loading content with AJAX</title>
+    <meta charset="utf-8">
+    <link href="../content/shared/styles/examples-offline.css" rel="stylesheet">
+    <link href="../../styles/kendo.common.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.rtl.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.mobile.min.css" rel="stylesheet">
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/jszip.min.js"></script>
+    <script src="../../js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js" ></script>
+    <script src="https://unpkg.com/@progress/kendo-layout-react-wrapper/dist/cdn/kendo-layout-react-wrapper.min.js"></script>
+    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
+    <script src="../content/shared/js/console.js"></script>
+    <script>
+        
+    </script>
+    
+    
+</head>
+<body>
+    
+        <a class="offline-button" href="../index.html">Back</a>
+    
+    <div id="example">
+    <div class="wrapper">
+        <div id="tabstrip"></div>
+    </div>
+</div>
+
+<script type="text/jsx">
+    const TabStrip = KendoLayoutReactWrapper.TabStrip;
+    const Tabs = KendoLayoutReactWrapper.Tabs;
+    const Tab = KendoLayoutReactWrapper.Tab;
+    const Content = KendoLayoutReactWrapper.Content;
+
+    const tabStripOptions = {
+            value: "Dimensions & Weights",
+            animation: { open: { effects: "fadeIn"} },
+            contentUrls: [
+                        '../content/web/tabstrip/ajax/ajaxContent1.html',
+                        '../content/web/tabstrip/ajax/ajaxContent2.html',
+                        '../content/web/tabstrip/ajax/ajaxContent3.html'
+                    ]
+        };
+
+    const element = (
+    <div>
+        <TabStrip {...tabStripOptions}>
+            <Tabs>
+                <Tab>Dimensions &amp; Weights</Tab>
+                <Tab>Engine</Tab>
+                <Tab>Chassis</Tab>
+            </Tabs>
+        </TabStrip>
+    </div>
+    );
+
+    ReactDOM.render(
+    element,
+    document.getElementById('tabstrip')
+    );
+</script>
+
+
+
+<style>
+    .wrapper {
+        height: 455px;
+        margin: 20px auto;
+        padding: 20px 0 0 0;
+        background: url('../content/web/tabstrip/bmw.png') no-repeat center 60px transparent;
+    }
+    #tabstrip {
+        max-width: 400px;
+        float: right;
+        margin-bottom: 20px;
+    }
+    #tabstrip .k-content
+    {
+        height: 320px;
+        overflow: auto;
+    }
+    .specification {
+        max-width: 670px;
+        margin: 10px 0;
+        padding: 0;
+    }
+    .specification dt, dd {
+        max-width: 140px;
+        float: left;
+        margin: 0;
+        padding: 5px 0 8px 0;
+    }
+    .specification dt {
+        clear: left;
+        width: 100px;
+        margin-right: 7px;
+        padding-right: 0;
+        opacity: 0.7;
+    }
+    .specification:after, .wrapper:after {
+        content: ".";
+        display: block;
+        clear: both;
+        height: 0;
+        visibility: hidden;
+    }
+</style>
+
+
+    
+</body>
+</html>

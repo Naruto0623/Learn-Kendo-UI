@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <!-- <link rel="stylesheet" href="css/kendo.common.min.css">
+    <link rel="stylesheet" href="css/kendo.silver.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/kendo.all.min.js"></script> -->
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+</head>
+<body>
+    <div id="example">
+        <div id="grid"></div>
+        <button v-on:click="aa">点</button>
+        <script>
+            function onChange(arg) {
+                var selectList = [];
+                selectList = this.selectedKeyNames();
+                localStorage.setItem('ss',selectList);
+            }
+            new Vue({
+                el: '#example',
+                data: {
+                    selectList: []
+                },
+                created: function() {
+                    this.list();
+                },
+                methods: {
+                    list: function() {
+                        var url = 'http://60.205.149.65:8004/api/Wangqiming/Lists';
+                        this.$http.post(url).then(function(res) {
+                            this.listData = res.data.results;
+                            $("#grid").kendoGrid({
+                                dataSource: {
+                                    data: this.listData,
+                                    pageSize: 2,
+                                    schema: {
+                                        model: {
+                                            id: "assetqrcode"
+                                        }
+                                    }
+                                },
+                                pageable: {
+                                    input: true,
+                                    numeric: true,
+                                    refresh: true,
+                                    pageSizes: [2, 5, 10, 50],
+                                    messages: {
+                                        display: "{0} - {1} 共 {2} 条数据",
+                                        empty: "没有数据",
+                                        page: "页",
+                                        of: "/ {0}",
+                                        itemsPerPage: "条每页",
+                                        first: "第一页",
+                                        previous: "前一页",
+                                        next: "下一页",
+                                        last: "最后一页",
+                                    }
+                                },
+                                batch: true,
+                                filter:this.filter,
+                                menu:true,
+                                buttonCount: 3,
+                                scrollable: false,
+                                persistSelection: true,
+                                // change: onChange,
+                                change: function(){
+                                    var selectList = [];
+                                    selectList = this.selectedKeyNames();
+                                    Vue.selectList = selectList;
+                                },
+                                sortable: true,
+                                reorderable: true,
+                                resizable: true,
+                                filterable: true,
+                                filterable:{ 
+                                    'multi': true, 
+                                    'search':true,
+                                    'messages': {
+                                        info: '显示符合一下条件的行'
+                                    }
+                                },
+                                columnMenu: {
+                                    messages: {
+                                        sortAscending: "升序",
+                                        sortDescending: "降序",
+                                        columns: '列',
+                                        filter: '过滤',
+                                        sort: '排序'
+                                    }
+                                },
+                                columns: [
+                                    { selectable: true, width: "50px"},
+                                    { field:"useto", title: "Product Name"},
+                                    { field: "assetqrcode", title:"Unit Price", format: "{0:c}"},
+                                    { field: "usename", title:"Units In Stock"},
+                                    { field: "Discontinued"}
+                                ]
+                            });
+                        });
+                    },
+                    aa() {
+                        var that = this;
+                        debugger;
+                        console.log(Vue.selectList);
+                        alert(that.selectList);
+                    },
+                    filter: function(reg) {
+                        var fif = reg;
+                        fif.field //取到的本列字段名
+                        fif.filter.filters //数组  value 具体值
+
+                    }
+                }
+            })
+        </script>
+        <script>
+            
+        </script>
+       <!--  <script>
+            function onChange(arg) {
+                var selectList = [];
+                debugger;
+                selectList = this.selectedKeyNames();
+                var selected = $.map(this.select(), function(item) {
+                    return $(item).text();
+                });
+            }
+            $(document).ready(function () {
+                $("#grid").kendoGrid({
+                    dataSource: {
+                        pageSize: 10,
+                        transport: {
+                            read:  {
+                                url: "https://demos.telerik.com/kendo-ui/service/Products",
+                                // url: "http://60.205.149.65:8004/api/Wangqiming/Lists",
+                                // type: 'post',
+                                dataType: "jsonp"
+                            }
+                        },
+                        schema: {
+                            model: {
+                                id: "UnitsInStock"
+                            }
+                        }
+                    },
+                    pageable: {
+                        input: true,
+                        numeric: true,
+                        messages: {
+                            display: "{0} - {1} 共 {2} 条数据",
+                            empty: "没有数据",
+                            page: "页",
+                            of: "/ {0}",
+                            itemsPerPage: "条每页",
+                            first: "第一页",
+                            previous: "前一页",
+                            next: "下一页",
+                            last: "最后一页",
+                            refresh: "刷新"
+                        }
+                    },
+                    scrollable: false,
+                    persistSelection: true,
+                    sortable: true,
+                    change: onChange,
+                    columns: [
+                        { selectable: true, width: "50px",model:{id:'ProductID'}},
+                        { field:"ProductName", title: "Product Name" },
+                        { field: "UnitPrice", title:"Unit Price", format: "{0:c}"},
+                        { field: "UnitsInStock", title:"Units In Stock"},
+                        { field: "Discontinued"}]
+                });
+            });
+        </script> -->
+    </div>
+</body>
+</html>

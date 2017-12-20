@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Overview</title>
+    <meta charset="utf-8">
+    <link href="../content/shared/styles/examples-offline.css" rel="stylesheet">
+    <link href="../../styles/kendo.common.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.rtl.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.mobile.min.css" rel="stylesheet">
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/jszip.min.js"></script>
+    <script src="../../js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js" ></script>
+    <script src="https://unpkg.com/@progress/kendo-layout-react-wrapper/dist/cdn/kendo-layout-react-wrapper.min.js"></script>
+    <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
+    <script src="../content/shared/js/console.js"></script>
+    <script>
+        
+    </script>
+    
+    
+</head>
+<body>
+    
+        <a class="offline-button" href="../index.html">Back</a>
+    
+    <div id="example">
+    <div class="demo-section k-content">
+        <div id="panelbar"></div>
+    </div>
+</div>
+
+<script type="text/jsx">
+    const PanelBar = KendoLayoutReactWrapper.PanelBar;
+    const PanelItem = KendoLayoutReactWrapper.PanelItem;
+    const SubItems = KendoLayoutReactWrapper.SubItems;
+
+    const element = (
+    <div>
+        <button className="k-button" onClick={expandAll}>Expand All</button>
+        <PanelBar>
+            <PanelItem className="k-state-active">
+                <span className="k-link k-state-selected">My Teammates</span>
+                <div>
+                    <div className="teamMate">
+                        <img src="../content/web/panelbar/andrew.jpg" alt="Andrew Fuller" />
+                        <div className="details">
+                            <h2>Andrew Fuller</h2>
+                            <p>Team Lead</p>
+                        </div>
+                    </div>
+                    <div className="teamMate">
+                        <img src="../content/web/panelbar/nancy.jpg" alt="Nancy Leverling" />
+                        <div className="details">
+                            <h2>Nancy Leverling</h2>
+                            <p>Sales Associate</p>
+                        </div>
+                    </div>
+                    <div className="teamMate">
+                        <img src="../content/web/panelbar/robert.jpg" alt="Robert King" />
+                        <div className="details">
+                            <h2>Robert King</h2>
+                            <p>Business System Analyst</p>
+                        </div>
+                    </div>
+                </div>
+            </PanelItem>
+            <PanelItem>
+                Projects
+                <SubItems>
+                    <PanelItem>New Business Plan</PanelItem>
+                    <PanelItem>
+                        Sales Forecasts
+                        <SubItems>
+                            <PanelItem>Q1 Forecast</PanelItem>
+                            <PanelItem>Q2 Forecast</PanelItem>
+                            <PanelItem>Q3 Forecast</PanelItem>
+                            <PanelItem>Q4 Forecast</PanelItem>
+                        </SubItems>
+                    </PanelItem>
+                    <PanelItem>Sales Reports</PanelItem>
+                </SubItems>
+            </PanelItem>
+            <PanelItem>
+                Programs
+                <SubItems>
+                    <PanelItem>Monday</PanelItem>
+                    <PanelItem>Tuesday</PanelItem>
+                    <PanelItem>Wednesday</PanelItem>
+                    <PanelItem>Thursday</PanelItem>
+                    <PanelItem>Friday</PanelItem>
+                </SubItems>
+            </PanelItem>
+        </PanelBar>
+    </div>
+    );
+
+    function expandAll(){
+    var panelbar = $('[data-role="panelbar"]').data('kendoPanelBar')
+    panelbar.expand($(".k-item"));
+    }
+
+    ReactDOM.render(
+    element,
+    document.getElementById('panelbar')
+    );
+</script>
+
+<style>
+    .k-button {
+        margin-bottom: 10px;
+    }
+
+    #panelbar {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .teamMate h2 {
+        font-size: 1.4em;
+        font-weight: normal;
+        padding-top: 20px;
+    }
+
+    .teamMate p {
+        margin: 0;
+    }
+
+    .teamMate img {
+        display: inline-block;
+        margin: 5px 15px 5px 5px;
+        border: 1px solid #ccc;
+        border-radius: 50%;
+    }
+
+    .details {
+        display: inline-block;
+        vertical-align: top;
+    }
+</style>
+
+
+    
+</body>
+</html>

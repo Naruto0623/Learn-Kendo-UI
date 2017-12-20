@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>resource</title>
+
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.mobile.all.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-datasource-vue-wrapper/dist/cdn/kendo-datasource-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-popups-vue-wrapper/dist/cdn/kendo-popups-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-buttons-vue-wrapper/dist/cdn/kendo-buttons-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-layout-vue-wrapper/dist/cdn/kendo-layout-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-window-vue-wrapper/dist/cdn/kendo-window-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dropdowns-vue-wrapper/dist/cdn/kendo-dropdowns-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dateinputs-vue-wrapper/dist/cdn/kendo-dateinputs-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-grid-vue-wrapper/dist/cdn/kendo-grid-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-upload-vue-wrapper/dist/cdn/kendo-upload-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-validator-vue-wrapper/dist/cdn/kendo-validator-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-inputs-vue-wrapper/dist/cdn/kendo-inputs-vue-wrapper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
+
+</head>
+<body>
+    <div id="example">
+        <div id="app">
+            <div class="radio">
+                <input type="radio" class="k-radio" name="editmode" value="popup" id="popup" v-on:change="handleOptionChange" />
+                <label class="k-radio-label" for="popup">操作列表</label>
+            </div>
+            <!-- <kendo-datasource ref="listData" :page-size='2'></kendo-datasource> -->
+            <kendo-datasource ref="listData"
+                              :transport='transport' 
+                              :page-size='2'></kendo-datasource>
+            <kendo-grid :data-source-ref="listData"
+                        :pageable='true'
+                        :filterable="{ multi: true, search:true }"
+                        :sortable='true'
+                        :column-menu='true'
+                        :columns="columns"
+                        :toolbar="['create', 'save', 'cancel']"
+                        :editable="true">
+                        <!-- <kendo-grid-column :selectable="true" :width="120" :editor="select"></kendo-grid-column> -->
+                        <!-- <kendo-grid-column field="useto"></kendo-grid-column> -->
+                        <!-- <kendo-grid-column field="assetqrcode"></kendo-grid-column> -->
+            </kendo-grid>
+        </div>
+    </div>
+
+    <script>
+    new Vue({
+        el: '#app',
+        data: {
+            listData: [],
+            transport: {
+                read:  {
+                    url: "https://demos.telerik.com/kendo-ui/service/Products",
+                    dataType: "jsonp"
+                },
+                update: {
+                    url: "https://demos.telerik.com/kendo-ui/service/Products/Update",
+                    dataType: "jsonp"
+                },
+                destroy: {
+                    url: "https://demos.telerik.com/kendo-ui/service/Products/Destroy",
+                    dataType: "jsonp"
+                },
+                create: {
+                    url: "https://demos.telerik.com/kendo-ui/service/Products/Create",
+                    dataType: "jsonp"
+                },
+                parameterMap: function(options, operation) {
+                    debugger;
+                    if (operation !== "read" && options.models) {
+                        return {models: kendo.stringify(options.models)};
+                    }
+                }
+            },
+            columns: [
+                // "订单列表",
+                { selectable:'true',width: '40px'},
+                { field: "useto", title: "城市"},
+                { field: "assetqrcode", title:"订单编号"},
+                { field: "usename",title:'客户名称'},
+                { field: "purchasedate",title:'订单日期'},
+                // { command: ['destroy','edit'],title:'操作'},
+                // { command: 'edit',editor:this.select,title:'操作'},
+            ],
+            kendoDataSource: new kendo.data.DataSource({
+                transport: {
+                    read:  {
+                        url: 'http://60.205.149.65:8004/api/Wangqiming/Lists',
+                        dataType: 'jsonp'
+                    }
+                },
+                pageSize: 2
+            })
+        },
+        created: function() {
+            // this.list();
+            // this.handleOptionChange();
+        },
+        methods: {
+            list: function() {
+                var url = 'http://60.205.149.65:8004/api/Wangqiming/Lists';
+                this.$http.post(url).then(function(res) {
+                    this.listData = res.data.results;
+                })
+            },
+            customBoolEditor: function(container, options) {
+                debugger;
+                var guid = kendo.guid();
+                kendo.jQuery('<input class="k-checkbox" id="' + guid + '" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container)
+                kendo.jQuery('<label class="k-checkbox-label" for="' + guid + '">&#8203;</label>').appendTo(container);
+            },
+            parameterMap: function (options, operation) {
+                debugger;
+                if (operation !== 'read' && options.models) {
+                    return { models: kendo.stringify(options.models) }
+                }
+            },
+            handleOptionChange: function (changeEvent) {
+                var columns = [
+                    { selectable:'true',width: '40px'},
+                    { field: "useto", title: "城市"},
+                    { field: "assetqrcode", title:"订单编号"},
+                    { field: "usename",title:'客户名称'},
+                    { field: "purchasedate",title:'订单日期'}
+                ]
+
+                var inlineOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "inline" },
+                    columns: this.columns.concat([{ command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }]),
+                    toolbar: ["create"]
+                };
+
+                var incellOptions = {
+                    dataSource: { batch: true },
+                    editable: { mode: "incell" },
+                    columns: columns.concat([{ command: "destroy", title: "&nbsp;", width: 150 }]),
+                    toolbar: ["create", "save", "cancel"]
+                };
+
+                var popupOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "popup" },
+                    columns: columns.concat([
+                        {command: ["edit", "destroy"],editor:this.customBoolEditor,title:'操作'}
+                    ]),
+                    toolbar: ["create"]
+                };
+
+                var editOptions = {
+                    incell: incellOptions,
+                    inline: inlineOptions,
+                    popup: popupOptions
+                };
+
+                // if (oldMode != changeEvent.currentTarget.value) {
+                    // oldMode = changeEvent.currentTarget.value
+                    var editMode = changeEvent.currentTarget.value
+                    var grid = $("[data-role='grid']").data("kendoGrid")
+
+                    grid.setOptions($.extend({}, grid.getOptions(), editOptions[editMode]));
+                // }
+            }
+        }
+    })
+    </script>
+</body>
+</html>

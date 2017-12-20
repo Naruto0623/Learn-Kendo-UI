@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>完整版</title>
+
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.mobile.all.min.css"/>
+    <style>
+        .guochao{
+            border: 1px solid #f00 !important;
+            height: 5px !important;
+            width: 5px !important;
+            display: inline-block;
+            text-align: center;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-datasource-vue-wrapper/dist/cdn/kendo-datasource-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-popups-vue-wrapper/dist/cdn/kendo-popups-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-buttons-vue-wrapper/dist/cdn/kendo-buttons-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-layout-vue-wrapper/dist/cdn/kendo-layout-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-window-vue-wrapper/dist/cdn/kendo-window-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dropdowns-vue-wrapper/dist/cdn/kendo-dropdowns-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dateinputs-vue-wrapper/dist/cdn/kendo-dateinputs-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-grid-vue-wrapper/dist/cdn/kendo-grid-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-upload-vue-wrapper/dist/cdn/kendo-upload-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-validator-vue-wrapper/dist/cdn/kendo-validator-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-inputs-vue-wrapper/dist/cdn/kendo-inputs-vue-wrapper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
+
+</head>
+<body>
+    <div id="example">
+        <div id="app">
+            <div id="grid"></div>
+        </div>
+    </div>
+    <script>
+    new Vue({
+        el: '#app',
+        data: {
+            listData: [],
+            pageables: {
+            	input: true,
+                pageSizes: true,
+                buttonCount: 2,
+                messages: {
+                    display: "显示{0}-{1}条，共{2}条",
+                    empty: "没有数据",
+                    page: "页",
+                    of: "/{0}",
+                    itemsPerPage: "条/页",
+                    first: "第一页",
+                    previous: "前一页",
+                    next: "下一页",
+                    last: "最后一页",
+                    refresh: "刷新"
+                }
+            },
+            columns: [
+                // "订单列表",
+                { selectable:'row',width: '40px'},
+                { field: "useto", title: "城市"},
+                { field: "assetqrcode", title:"订单编号"},
+                { field: "usename",title:'客户名称'},
+                { field: "purchasedate",title:'订单日期'},
+                { command: ['destroy','edit'],title:'操作'},
+                // { command: 'edit',editor:this.select,title:'操作'},
+            ],
+            kendoDataSource: new kendo.data.DataSource({
+                transport: {
+                    read:  {
+                        url: 'http://60.205.149.65:8004/api/Wangqiming/List',
+                        dataType: 'jsonp',
+                    }
+                },
+                pageSize: 2
+            }),
+            ss: ''
+        },
+        created: function() {
+            var url = 'http://60.205.149.65:8004/api/Wangqiming/Lists';
+            this.$http.post(url).then(function(res) {
+                this.listData = res.data.results;
+                var validator;
+                var viewModel = kendo.observable({
+                    data: this.listData,
+                    pageSize: 2,
+                    parameterMap: function (options, operation) {
+                        debugger;
+                        if (operation == "read") {
+                            var parameter = {
+                                page: options.page,
+                                pageSize: options.pageSize
+                            };
+                            return kendo.stringify(parameter);
+                        }
+                    }
+                })
+                var list = [{
+                    'flag': true,
+                    "assetsid": "7e28d461-c9cb-4aa1-8e0e-0ca3d854eb66",
+                    "assetsids": null,
+                    "assetscoding": "0130011",
+                    "assetqrcode": "000001001093",
+                    "categoryid": "11111113333",
+                    "assetname": "1212",
+                    "tenantid": "e93a1585-0ba6-429c-ad17-553d150217c0",
+                    "stateid": "17748c2e-8687-11e7-9b06-00163e06511f",
+                    "snno": "1212",
+                    "department": "IT",
+                    "useto": "北京",
+                    "usename": "121",
+                    "userstation": "",
+                    "suppliers": "123",
+                    "configuration": "1212",
+                    "purchasedate": "2017/10/27 19:22:27",
+                    "inbounddate": "2017/10/27 19:22:27",
+                    "original": "121",
+                    "assetvalue": "121",
+                    "depreciation": "1111",
+                    "smallvalue": "111",
+                    "imageupload": "\"u=4131634322,487666839&fm=27&gp=0.jpg\"",
+                    "imageuploadurl": "ezg.lenovo.com.cn:8001\\Uploa\\a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "imageuploadnew": "a0138496-e462-4adf-a9a3-ba249d31f419.jpg",
+                    "remark": "1212",
+                    "customfield": "[{\"name\":\"测试\",\"value\":\"121\",\"type\":\"-1\",\"AssetsID\":null},{\"name\":\"测试\",\"value\":\"121\",\"type\":\"bfe2347f-91e8-11e7-a9c8-00163e102722\",\"AssetsID\":null}]",
+                    "createperson": null,
+                    "createdate": "2017-10-27 19:22:43",
+                    "updateperson": null,
+                    "updatedate": null,
+                    "deleteflag": null,
+                    "cleandate": null,
+                    "cleanby": null,
+                    "assetclasses": null,
+                    "returnid": null,
+                    "cleanid": null,
+                    "pagesize": null,
+                    "pageindex": null,
+                    "cleanreasons": null,
+                    "loginfoid": null,
+                    "godownentryid": null,
+                    "orderid": "RK171027072243887",
+                    "createname": null,
+                    "updatename": null,
+                    "newfield": null,
+                    "type": null,
+                    "list": null,
+                    "repairreason": null,
+                    "repairtype": null,
+                    "repairdate": "0001-01-01 00:00:00",
+                    "transferdate": "0001-01-01 00:00:00",
+                    "usedate": "0001-01-01 00:00:00",
+                    "error": null,
+                    "tenantname": null,
+                    "enterprisecode": null,
+                    "recipientsdate": null,
+                    "userrealname": null,
+                    "remarks": null
+                }];
+                var grid = $("#grid").kendoGrid({
+                    dataSource: {
+                        data: list,
+                        pageSize: 5,
+                        schema: {
+                            model: {
+                              id: 'assetqrcode'
+                            },
+                            total:function(d){
+                                debugger;
+                                var a = d.count;
+                            },
+                            data: function(d){
+                                debugger;
+                                var a = d.count;
+                            }
+                        }
+                    },
+                    // dataSource.filter( { field: "name", operator: "startswith", value: "Jane" })
+                    pageable: true,
+                    height: 430,
+                    selectable: "true",
+                    columns: [
+                        // { field: "flag", title: 'flag',format: "{0:c}",width: "20px",template: "<input type='checkbox'" },
+                        // { field: "flag", width: 40, template: "<input type='checkbox' onclick='checkAll(this)' data-bind='checked:flag'>", headerTemplate: "<input id='checkAll' type='checkbox'/>" },
+                        { selectable:'row',width: '40px'},
+                        { field: "useto", title: "Unit Price", format: "{0:c}", width: 110 },
+                        { field: "assetqrcode", title: "Units In Stock", width: 110 },
+                        { field: "usename", width: 110 }
+                    ],
+                    selectable: true,
+                    change: function (e) {
+                        debugger;
+                         var selectList = this.selectedKeyNames ();
+                        console.log (selectList);
+                        var model = this.dataItem(this.select());
+                        $('.guochao').addClass('yanzi');
+                    }
+                }).data("kendoGrid");
+            });
+        },
+        methods: {
+            checkAll: function() {
+                console.log(2);
+            },
+            customBoolEditor: function(container, options) {
+                debugger;
+                var guid = kendo.guid();
+                kendo.jQuery('<input class="k-checkbox" id="' + guid + '" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container)
+                kendo.jQuery('<label class="k-checkbox-label" for="' + guid + '">&#8203;</label>').appendTo(container);
+            },
+            parameterMap: function (options, operation) {
+                debugger;
+                if (operation !== 'read' && options.models) {
+                    return { models: kendo.stringify(options.models) }
+                }
+            },
+            sort: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+            	alert('排序回调');
+            },
+            page: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('分页回调');
+            },
+            filter: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('过滤回调');
+            },
+            edit: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('编辑回调');
+            },
+            select: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('选中回调');
+            },
+            handleOptionChange: function (changeEvent,operation) {
+                debugger;
+                var columns = [
+                     "ProductName",
+                     { field: "UnitPrice", title: "Unit Price", format: "{0:c}", width: 120 },
+                     { field: "UnitsInStock", title: "Units In Stock", width: 120 },
+                     { field: "Discontinued", width: 120, editor: this.customBoolEditor }]
+
+                var inlineOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "inline" },
+                    columns: columns.concat([{ command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }]),
+                    toolbar: ["create"]
+                };
+
+                var incellOptions = {
+                    dataSource: { batch: true },
+                    editable: { mode: "incell" },
+                    columns: columns.concat([{ command: "destroy", title: "&nbsp;", width: 150 }]),
+                    toolbar: ["create", "save", "cancel"]
+                };
+
+                var popupOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "popup" },
+                    columns: columns.concat([{ command: ["edit", "destroy"],editor: this.customBoolEditor, title: "操作", width: "250px" }]),
+                    toolbar: ["create"]
+                };
+
+                var editOptions = {
+                    incell: incellOptions,
+                    inline: inlineOptions,
+                    popup: popupOptions
+                };
+
+                if (oldMode != changeEvent.currentTarget.value) {
+                    oldMode = changeEvent.currentTarget.value
+                    var editMode = changeEvent.currentTarget.value
+                    var grid = $("[data-role='grid']").data("kendoGrid")
+
+                    grid.setOptions($.extend({}, grid.getOptions(), editOptions[editMode]));
+                }
+            }
+        }
+    })
+    </script>
+</body>
+</html>

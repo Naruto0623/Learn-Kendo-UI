@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base href="http://demos.telerik.com/kendo-vue-ui/wrappers/grid/editing">
+    <style>
+    html {
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    </style>
+    <title></title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.3.1018/styles/kendo.material.mobile.min.css" />
+    <script src="https://kendo.cdn.telerik.com/2017.3.1018/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2017.3.1018/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-all-vue-wrapper/dist/cdn/kendo-all-vue-wrapper.min.js"></script>
+</head>
+
+<body>
+    <style>
+    .radio {
+        display: inline-block;
+    }
+    </style>
+    <div id="example">
+        <div id="app">
+            <kendo-datasource ref="datasource1" 
+            :transport-read-url="'http://60.205.149.65:8004/api/Wangqiming/Lists'" 
+            :transport-read-type="'post'" 
+            :change="a" 
+            :transport-read-data-type="'json'" 
+            :transport-update-url="'https://demos.telerik.com/kendo-ui/service/Products/Update'" 
+            :transport-update-data-type="'jsonp'" 
+            :transport-destroy-url="'https://demos.telerik.com/kendo-ui/service/Products/Destroy'" 
+            :transport-destroy-data-type="'jsonp'" 
+            :transport-create-url="'https://demos.telerik.com/kendo-ui/service/Products/Create'" 
+            :transport-create-data-type="'jsonp'" 
+            :transport-parameter-map="parameterMap" 
+            :schema="schema" 
+            :select="'aa'" 
+            :batch='true'
+            :page-size='20'>
+            </kendo-datasource>
+            <kendo-grid 
+                :data-source-ref="'datasource1'" 
+                :height="550"
+                :selectable="'row'"
+                :pageable='true' 
+                :navigatable='true' 
+                :editable="'popup'" 
+                :toolbar="['create', 'save', 'cancel']">
+                <kendo-grid-column selectable="true"></kendo-grid-column>
+                <kendo-grid-column field="id"></kendo-grid-column>
+                <kendo-grid-column field="name" title="Unit Price" :width="120" :format="'{0:c}'"></kendo-grid-column>
+                <kendo-grid-column field="assetname" title="Units In Stock" :width="120"></kendo-grid-column>
+                <kendo-grid-column field="Discontinued" :width="120" :editor="customBoolEditor"></kendo-grid-column>
+                <kendo-grid-column :command="['destroy','edit']" title="操作;" width="250px"></kendo-grid-column>
+            </kendo-grid>
+            <!-- <div class="box wide">
+                <h4>CONFIGURATION</h4>
+                <form>
+                    <div class="radio">
+                        <input type="radio" class="k-radio" name="editmode" value="incell" id="incell" v-on:change="handleOptionChange" checked="checked" />
+                        <label class="k-radio-label" for="incell">Incell</label>
+                    </div>
+                    <div class="radio">
+                        <input type="radio" class="k-radio" name="editmode" value="inline" id="inline" v-on:change="handleOptionChange" />
+                        <label class="k-radio-label" for="inline">Inline</label>
+                    </div>
+                    <div class="radio">
+                        <input type="radio" class="k-radio" name="editmode" value="popup" id="popup" v-on:change="handleOptionChange" />
+                        <label class="k-radio-label" for="popup">Popup</label>
+                    </div>
+                </form>
+            </div> -->
+        </div>
+    </div>
+    <script>
+    var oldMode = "incell";
+
+    new Vue({
+        el: '#app',
+        data: {
+            schema: {
+                parse: function(response) {
+                    var products = [];
+                    products = response.results;
+                    return products;
+                },
+                model: {
+                    id: "UnitsInStock"
+                }
+            },
+            schemaModelFields: {
+                ProductID: { editable: false, nullable: true },
+                ProductName: { validation: { required: true } },
+                UnitPrice: { type: 'number', validation: { required: true, min: 1 } },
+                Discontinued: { type: 'boolean' },
+                UnitsInStock: { type: 'number', validation: { min: 0, required: true } }
+            }
+        },
+        methods: {
+            a(reg){
+              console.log(2);
+            },
+            parse: function(response) {
+                var products = [];
+                for (var i = 0; i < response.length; i++) {
+                    var product = {
+                        id: response[i].ProductID,
+                        name: response[i].ProductName
+                    };
+                    products.push(product);
+                }
+                console.log(products);
+                return products;
+            },
+            customBoolEditor: function(container, options) {
+                var guid = kendo.guid();
+                kendo.jQuery('<input class="k-checkbox" id="' + guid + '" type="checkbox" name="Discontinued" data-type="boolean" data-bind="checked:Discontinued">').appendTo(container)
+                kendo.jQuery('<label class="k-checkbox-label" for="' + guid + '">​</label>').appendTo(container);
+            },
+            parameterMap: function(options, operation) {
+                debugger;
+                if (operation !== 'read' && options.models) {
+                    return { 
+                        page: 1,
+                        pageSize: 20,
+                        models: kendo.stringify(options.models) 
+                    }
+                }
+            },
+            handleOptionChange: function(changeEvent) {
+
+                var columns = [
+                    "ProductName",
+                    { field: "UnitPrice", title: "Unit Price", format: "{0:c}", width: 120 },
+                    { field: "UnitsInStock", title: "Units In Stock", width: 120 },
+                    { field: "Discontinued", width: 120, editor: this.customBoolEditor }
+                ]
+
+                var inlineOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "inline" },
+                    columns: columns.concat([{ command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }]),
+                    toolbar: ["create"]
+                };
+
+                var incellOptions = {
+                    dataSource: { batch: true },
+                    editable: { mode: "incell" },
+                    columns: columns.concat([{ command: "destroy", title: "&nbsp;", width: 150 }]),
+                    toolbar: ["create", "save", "cancel"]
+                };
+
+                var popupOptions = {
+                    dataSource: { batch: false },
+                    editable: { mode: "popup" },
+                    columns: columns.concat([{ command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }]),
+                    toolbar: ["create"]
+                };
+
+                var editOptions = {
+                    incell: incellOptions,
+                    inline: inlineOptions,
+                    popup: popupOptions
+                };
+
+                if (oldMode != changeEvent.currentTarget.value) {
+                    oldMode = changeEvent.currentTarget.value
+                    var editMode = changeEvent.currentTarget.value
+                    var grid = $("[data-role='grid']").data("kendoGrid")
+
+                    grid.setOptions($.extend({}, grid.getOptions(), editOptions[editMode]));
+                }
+            }
+        }
+    })
+    </script>
+</body>
+
+</html>

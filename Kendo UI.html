@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2015.3.1111/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2015.3.1111/styles/kendo.rtl.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2015.3.1111/styles/kendo.silver.min.css" />
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2015.3.1111/styles/kendo.mobile.all.min.css" />
+    <style type="text/css">
+        .sortable-basic li{ height:40px; line-height: 40px; background: lightcyan; margin-bottom: 5px;}
+        .sortable-basic .disabled{ background: pink;}
+        .sortable-basic .not-sortable{ background: grey;}
+        li.hint{display: block; width: 200px;}
+        li.hint {
+            position: relative;
+            display: block;
+            width: 200px;
+            height:40px;
+            background-color: #52aef7;
+            color: #fff;
+        }
+
+        li.hint:after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 6px solid #52aef7;
+            position: absolute;
+            right: -6px;
+            top: 8px;
+        }
+
+        li.hint:last-child {
+            border-radius: 4px;
+        }
+
+        li.hint span {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+	<!-- for vue -->
+	http://demos.telerik.com/kendo-vue-ui/wrappers/grid/combined-filter-menu
+	<!-- 输入框搜索功能 -->
+	<input class="chooseCountry" type="text"/>
+	<!-- 按钮 -->
+	<p class="button-primary">primary Button</p>
+    <p class="button-passed">disabled Button</p>
+	<!-- 时间控件 -->
+	<div class="calendar">
+    	<!-- kendo will create calendar elements here -->
+	</div>
+	<!-- 输入框时间控件 -->
+	<div class="date_time_picker_wrap">
+　　	<input id="dateTimePicker" type="text"/>
+	</div>
+	<!-- 拾色器（通过选择颜色换皮肤） -->
+	<div class="color_picker_wrap" style="width:400px;">
+        <div class="color_view" style="height:60px; padding: 10px; background: #000">
+            <h3 style="color: #fff;">COLOR VIEW</h3>
+        </div>
+        <div class="color_choose"></div>
+        <br/>
+        <input class="color_customer_choose"/>
+    </div>
+	<!-- 可输入下拉框模糊搜索 -->
+    <div class="combobox-wrap" style="background:#ddd; padding: 10px;">
+        <h3>choose drink</h3>
+        <input id="choose_drink" type="text" placeholder="Select drink..."/>
+        <h3>size</h3>
+        <!-- kendo will create elements replace select, select will hide -->
+        <select id="size" name="" placeholder="Select size...">
+            <option value="">迷你杯</option>
+            <option value="">小杯</option>
+            <option value="">中杯</option>
+            <option value="">大杯</option>
+            <option value="">特大杯</option>
+        </select>
+        <button id="order-submit">submit order</button>
+    </div>
+	<!-- 变色li -->
+    <div class="sortableWrap" style="margin-left: 400px;">
+        <ul class="sortable-basic">
+            <li class="sortable">狼哥哥<span>handsome</span></li>
+            <li class="sortable">豆芽菜<span>dude</span></li>
+            <li class="sortable">鸡鸡猫<span>dude</span></li>
+            <li class="sortable">凹凸曼<span>idiot</span></li>
+            <li class="sortable disabled">船长<span>disabled item</span></li>
+            <li class="sortable disabled">船长老婆大人<span>disabled item</span></li>
+            <li class="not-sortable">猪头<span>not sortable item</span></li>
+        </ul>
+    </div>
+	<!-- 基础表格 -->
+    <div class="dataSource">
+        <table class="peoples">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2015.3.1111/js/kendo.all.min.js"></script>
+    <script id="templateDataSource" type="text/x-kendo-template">
+        <tr>
+            <td>#= rank #</td>
+            <td>#= name #</td>
+            <td>#= age #</td>
+        </tr>
+    </script>
+    <script type="text/javascript">
+    	//基础表格
+        function dataSourceDemo() {
+            var template = kendo.template($("#templateDataSource").html());
+
+            var peoples = [
+                { "rank": 1, "name": "狼哥哥", age: "18"},
+                { "rank": 2, "name": "豆芽菜", age: "21"},
+                { "rank": 3, "name": "王晓花", age: "23"},
+                { "rank": 4, "name": "夜影", age: "25"},
+                { "rank": 5, "name": "鸡鸡猫", age: "19"}
+            ];
+            var dataSource = new kendo.data.DataSource({
+                data: peoples,
+                change: function () { // subscribe to the CHANGE event of the data source;
+                    $(".peoples tbody").html(kendo.render(template, this.view())); // populate the table;
+                    console.log(this.view());
+                }
+            });
+            // read data from "peoples" array
+            dataSource.read();
+        }
+        dataSourceDemo();
+    </script>
+    <script>
+    	$(document).ready(function () {
+           //输入框搜索
+           var data = [
+               "中国",
+               "中国台湾",
+               "中国断臂山",
+               "日本",
+               "台湾"
+            ];
+            $(".chooseCountry").kendoAutoComplete({
+               dataSource: data,
+               filter: "startswith",
+               placeholder: "选择你的国家，蠢货！",
+               separator: ", "
+            });
+
+            //按钮样式 + 图标
+            $(".button-primary").kendoButton({
+	            enable : true,
+	            icon : "wolf" // create span inner obj, and span.class = kin-icon, k-i-"this.value";
+	        });
+	        $(".button-passed").kendoButton({
+	            enable : false,
+	            // icon: 'refresh',
+	            spriteCssClass : "k-icon k-i-refresh" // create span inner obj, and span.class = this.value;
+	        });
+
+	        //时间控件
+	        $(".calendar").kendoCalendar();
+
+	        //拾色器（点击颜色换皮肤）
+	        function preview(e) {
+　　　　　　	$(".color_view").css("background-color", e.value);
+		　　}
+	        $(".color_choose").kendoColorPalette({
+	            columns: 4,
+	            tileSize: {
+	                width: 35,
+	                height: 19
+	            },
+	            palette: [
+	                "#e1dca5", "#d0c974", "#a29a36", "#514d1b",
+	                "#c6d9f0", "#8db3e2", "#548dd4", "#17365d",
+	                "#e1dca5", "#d0c974", "#a29a36", "#514d1b",
+	                "#c6d9f0", "#8db3e2", "#548dd4", "#17365d"
+	            ],
+	            change: preview
+	        });
+	        $(".color_customer_choose").kendoColorPicker({
+	            value: "#fff",
+	            buttons: false,
+	            select: preview
+	　　　　});
+
+	        //可输入下拉模糊搜索框
+	        $("#choose_drink").kendoComboBox({
+                dataTextField : "text",
+                dataValueField : "value",
+                dataSource : [
+                    { text: "coffee", value : "1"},
+                    { text: "banana juice", value : "2"},
+                    { text: "apple juice", value : "3"},
+                    { text: "ice juice", value : "4"}
+                ],
+                filter : "contains",
+                suggest : true,
+                index : 3
+            });
+            // create ComboBox from select HTML element
+            $("#size").kendoComboBox();
+            var fabric = $("#choose_drink").data("kendoComboBox");
+            var select = $("#size").data("kendoComboBox");
+            $("#order-submit").click(function() {
+                alert('Thank you! Your Choice is:\n\nDrink ID: ' + fabric.value() + ' and Size: ' + select.value());
+            });
+
+            //输入框时间控件
+            $("#dateTimePicker").kendoDatePicker();
+
+            //变色li
+            $(".sortable-basic").kendoSortable({
+	            hint:function(element) {
+	                return element.clone().addClass("hint");    // when draging, auto create draging element: "<li></li>"  and this statement is setting the mark's CSS;
+	            },
+	            placeholder:function(element) {
+	                return element.clone().addClass("placeholder").text("drop here");   // when draging, auto create placeHolder element: "<li></li>"  and this statement is setting the mark's CSS && text;
+	            },
+	            filter: ".sortable", // only abled filter's selector to sortable;
+	            disabled: ".disabled", // cant drop self;
+	            cursor: "url('content/web/sortable/grabbing.cur'), default",
+	            // coursor image;
+	            cursorOffset: { // basic from cursor;
+	                top: -10,
+	                left: -230
+	            }
+	        });
+
+            //
+        });
+    </script>
+</body>
+
+</html>

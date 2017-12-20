@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Kendo UI Grid</title>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <a href="https://docs.telerik.com/kendo-ui-wrappers-vue/components/grid#data-source-settings">Kendo UI for Vue API</a>
+    <div id="grid"></div>
+    <!--编辑自定义弹框模板-->
+    <script id="popup-editor" type="text/x-kendo-template">
+        <h3>Edit Person</h3>
+        <p>
+            <label>Name:<input name="name"/></label>
+        </p>
+        <p>
+            <label>Age: <input data-role="numerictextbox" name="age"/></label>
+        </p>
+    </script>
+    <!--自定义行模板-->
+    <script id="template" type="text/x-kendo-template">
+        <tr data-uid="#= uid #">
+            <td colspan="2">
+                <strong>#: name #</strong>
+                <strong>#: age #</strong>
+            </td>
+        </tr>
+    </script>
+    <script>
+      new Vue ({
+        el: "#app",
+        data: {
+          listData: []
+        },
+        created: function () {
+
+        },
+        mounted: function () {
+          this.grid();
+        },
+        methods: {
+          grid: function () {
+            var dataSource = new kendo.data.DataSource ({
+              //不加载直接绑定数据
+              data: [],      //表格数据（访问不到this）
+              //加载数据方式
+              transport: {
+                //列表读取接口
+                read: {
+                  url: "http://demos.telerik.com/kendo-ui/service/products",
+                  type: "get",      //请求类型
+                  dataType: "jsonp", //返回数据格式
+                  contentType: "application/json; charset=utf-8"
+                },
+                // 修改更新接口
+                update: {
+                  url: "https://demos.telerik.com/kendo-ui/service/Products/Update",
+                  dataType: "jsonp"
+                },
+                // 删除接口
+                destroy: {
+                  url: "https://demos.telerik.com/kendo-ui/service/Products/Destroy",
+                  dataType: "jsonp"
+                },
+                // 新建保存接口
+                create: {
+                  url: "https://demos.telerik.com/kendo-ui/service/Products/Create",
+                  dataType: "jsonp"
+                },
+                //  请求接口前传参函数
+                parameterMap: function (options, operation) {
+                  debugger;
+                  if (operation !== "read" && options.models) {
+                    var parameter = {
+                      page:options.page,
+                      pageSize:options.pageSize,
+                      models: kendo.stringify (options.models)
+                    };
+                    return parameter;
+                  }
+                }
+              },
+              //定义计算列字段和计算方式,需在columns目标列中配合如下使用：
+              // footerTemplate: "Min: #: min # Max: #: max #"
+              aggregate: [   //表格列计算
+                {field: "assetvalue", aggregate: "min"},  //计算列字段名称
+                {field: "assetvalue", aggregate: "max"}
+              ],
+              //自动编组，实现相同值编组统计总条数，需在columns目标列中配合如下使用：
+              //groupHeaderTemplate: "Age: #= value # total: #= count #",
+              group: {      //自动编组
+                field: "age",   //计算相同值字段名称
+                aggregates: [{field: "age", aggregate: "count"}]//计算相同组中的值类型
+              },
+              serverPaging: true,       //分页是否发起请求
+              serverSorting: true,      //排序是否发起请求
+              serverFiltering: true,    //过滤是否发起请求
+              schema: {         //列表架构
+                model: {        //列表关联id字段
+                  id: "assetqrcode",
+                  fields: {     //定义每列字段类型，是否可编辑等
+                    num: {      //定义的字段名称
+                      type: "number",      //定义字段值的类型
+                      validation: {         //定义字段验证规则
+                        required: true,     //定义字段是否为必填字段
+                        min: 0              //定义字段最小值
+                      },    //是否为必填字段
+                      editable: false,      //是否可编辑
+                      nullable: true        //是否可以为空
+                    }
+                  }
+                },
+                //操作列表加载数据，可以自定义数据格式
+                parse: function (response) {
+                  var products = [];
+                  for (var i = 0; i < response.length; i++) {
+                    var product = {
+                      id: response[i].ProductID,
+                      name: response[i].ProductName
+                    };
+                    products.push (product);
+                  }
+                  return products;
+                },
+                //返回值
+                data: function (d) {
+                  return d.data;
+                },
+                //总页数
+                total: function (d) {
+                  return d.count;
+                }
+              }
+            });
+            $ ("#grid").kendoGrid ({
+              autoBind: false,      //列表初始化是否自动绑定数据
+              dataSource: {
+                data: this.listData,
+                pageSize: 5,
+                schema: {
+                  model: {
+                    id: "assetqrcode"
+                  }
+                }
+              },
+              //选择中
+              // row    选中整行
+              // cell   选中单元格
+              // "multiple, row"        可选中多行
+              // "multiple, cell"       可选多个单元格
+              selectable: "multiple, row",
+              resizable: true,      //是否允许用户调整列宽
+              batch: true,          //是否可以批量处理
+              filter: this.filter,  //过滤回调函数
+              scrollable: true,    //是否有滚动条
+              persistSelection: true,       //是否有缓存
+              sortable: true,       //是否开启点击列标题排序功能
+              reorderable: true,     //是否允许用户自己调整列的顺序
+              filterable: true,     //是否开启列表功能
+              noRecords: true,      //列表没有数据时列表中显示一个提示区域
+              height: 200,          //提示区域自定义大小
+              messages: {           //提示区域自定义文字
+                noRecords: "当前页面上没有数据"
+              },
+              //定义编辑类型为弹框类型，分为：inherit，inline，proup
+              editable: {
+                mode: "popup",  //分为：inherit，inline，popup,
+                update: true,   //是否允许更新，false时点击编辑没反应
+                window: {
+                  title: "编辑框的标题",      //编辑框的标题
+                  animation: true,          //弹框是否开启动画效果
+                  open: function () {       //点击修改的回调函数
+                    alert (2);
+                  }
+                },
+                //添加编辑自定义模板
+                template: kendo.template ($ ("#popup-editor").html ()),
+                confirmation: false,    //不需要确认直接删除
+                createAt: "bottom",     //新建自动插入到列表最后
+                //删除确认弹框自定义文字
+                confirmation: function (e) {
+                  return "确认删除" + e.name + "?";
+                }
+              },
+              allowCopy: {          //是否允许复制列表内容
+                delimeter: "",     //字段名
+              },
+              //所有的头部操作按钮
+              toolbar: ["cancel", "create", "save", "excel", "pdf"],
+              //也可以吧列表头定义成一行文字
+              toolbar: "<p>列表头一行</p>",
+              toolbar: [
+                {
+                  name: "custom",       //自定义按钮操作
+                  text: "新建"          //自定义按钮显示文字
+                }
+              ],
+              pdf: {        //定义内置导出PDF
+                fileName: "Products.pdf",   //导出的PDF名称
+                subject: "Products",        //导出PDF主题
+                forceProxy: true,   //是否启用导出代理
+                proxyURL: "",        //PDF导出接口
+                allPages: true,     //是否导出所有页
+                paperSize: "A3",    //PDF页面大小
+                landscape: false,   //
+                author: "Jon Don",       //定义导出的excel作者
+                avoidLinks: true,        //放置链接
+                date: new Date ("2014/10/10"),
+                margin: {               //设置导出PDF样式
+                  left: 10,
+                  right: "10pt",
+                  top: "10mm",
+                  bottom: "1in"
+                },
+                title: "Prudouct",       //导出标题
+                proxyTarget: "_blank"       //导出是否弹出新的空白页
+              },
+              excel: {      //定义内置导出excel
+                fileName: "Products.xslx",   //导出的excel名称
+                subject: "Products",        //导出excel主题
+                forceProxy: true,   //是否启用导出代理
+                proxyURL: "",        //excel导出接口
+                allPages: true,     //是否导出所有页
+                paperSize: "A3",    //excel页面大小
+                author: "Jon Don",       //定义导出的excel作者
+                avoidLinks: true,       //放置链接
+                date: new Date ("2014/10/10"),
+                filterable: true,
+                title: "Prudouct",       //导出标题
+                proxyTarget: "_blank"       //导出是否弹出新的空白页
+              },
+              pageable: {
+                input: true,        //是否有页码输入框
+                numeric: true,
+                refresh: true,      //是否显示刷新按钮
+                pageSize: 2,        //每页显示条数
+                buttonCount: 3,       //显示页码数字，超出显示省略号
+                pageSizes: [2, 5, 10, 50],      //可选则每页显示多少条
+                messages: {
+                  display: "{0} - {1} 共 {2} 条数据",
+                  empty: "没有数据",
+                  page: "页",
+                  of: "/ {0}",
+                  itemsPerPage: "条每页",
+                  first: "第一页",
+                  previous: "前一页",
+                  next: "下一页",
+                  last: "最后一页",
+                }
+              },
+              columnMenu: {
+                messages: {
+                  sortAscending: "升序",
+                  sortDescending: "降序",
+                  columns: '列',
+                  filter: '过滤',
+                  sort: '排序'
+                }
+              },
+              filterable: {
+                'mode': 'row',        //单列文本框搜索
+                'multi': true,      //行过滤时是否多选
+                'checkAll': false,    //行过滤时是否可以全选
+                'search': true,       //是否显示过滤搜索框
+                'ui': "datetimepicker",    //时间过滤
+                extra: false,
+                operators: {
+                    string: {
+                        startswith: "Starts with",
+                        eq: "Is equal to",
+                        neq: "Is not equal to"
+                    }
+                },
+                //搜索框过滤的自定义信息
+                'messages': {
+                  info: '显示符合一下条件的行',
+                  cancel: "取消过滤",
+                  and: "且",
+                  or: "或",
+                  filter: "过滤",
+                  clear: "清除过滤条件"
+                }
+              },
+              //自定义显示文字
+              messages: {
+                //命令按钮自定义显示文字
+                commands: {
+                  cancel: "取消",
+                  canceledit: "取消编辑",
+                  create: "新建",
+                  destroy: "删除",
+                  edit: "编辑",
+                  save: "保存列表变化",
+                  select: "选择",
+                  update: "编辑更新"
+                }
+              },
+              //定义所有行的html模板
+              rowTemplate: kendo.template ($ ("#template").html ()),
+              //inline行内编辑的回调函数
+              editor: function (container, options) {
+                var input = $ ("<input/>");
+                input.attr ("name", options.field);
+                input.appendTo (container);
+                input.kendoAutoComplete ({
+                  dataTextField: "name",
+                  dataSource: [
+                    {name: "Jane Doe"},
+                    {name: "John Doe"}
+                  ]
+                });
+              },
+              //更新保存回调函数
+              save: function (e) {
+                if (e.values.name) {
+                  // the user changed the name field
+                  if (e.values.name != e.model.name) {
+                    console.log ("name is modified");
+                  }
+                }
+              },
+              //顶部保存列表所有操作回调函数
+              saveChanges: function (e) {
+                if (!confirm ("确定保存?")) {
+                  e.preventDefault ();
+                }
+              },
+              //取消编辑关闭编辑模态框回调函数
+              cancel: function (e) {
+                var itme = e.model;     //当前被选中条信息
+                console.log (itme);
+                console.log (e.preventDefault ());
+              },
+              //选中当前行获取选中id信息，配合dataSource.schema.model.id中所绑定的值使用
+              change: function () {
+                var selectList = this.selectedKeyNames ();
+                Vue.selectList = selectList;
+              },
+              pdfExport: function (e) {      //导出PDF后的回调函数
+                e.promise.progress (function (e) {
+                  console.log (kendo.format ("{0:P} complete", e.progress));
+                }).done (function () {
+                  alert ("Export completed!");
+                });
+              },
+              excelExport: function (e) {
+                e.workbook.fileName = "Grid.xlsx";
+              },
+              columns: [
+                {
+                  selectable: true,
+                  width: "50px"
+                },
+                {
+                  field: "assetvalue",      //绑定字段名
+                  //计算当列值，需配合dataSource中定义如下使用
+                  /*aggregate: [
+                    { field: "assetvalue", aggregate: "min" },
+                    { field: "assetvalue", aggregate: "max" }
+                  ],*/
+                  footerTemplate: "最小值: #: min # 最大值: #: max #",    //列底部计算行
+                  //自动编组，归类同一个值的数据，需在dataSource中定义如下使用
+                  //group: { field: "age", aggregates: [ { field: "age", aggregate: "count" }]}
+                  groupHeaderTemplate: "Age: #= value # total: #= count #",
+                  title: "Product Name",     //自定义当前列标题
+                  encoded: false,           //不显示html
+                  attributes: {             //给当前列添加属性
+                    "class": "table-cell",
+                    "style": "text-align: center;color: red; font-size: 14px"
+                  },
+                  attributes: { style: "#=isgen === true ? 'color:red;' : ''#" },
+                  template: "<strong>#=linelevel == 1 ? '是' : '否' # </strong>"       //自定义此列标签
+                },
+                {
+                  title: "操作",      //命令栏标题
+                  command: [         //命令操作数组
+                    {
+                      name: "edit",  //操作类型
+                      text: {
+                        edit: "编辑",     //自定义操作按钮显示文字
+                        cancel: "取消",   //自定义弹框的取消操作按钮显示文字
+                        update: "确定"    //自定义弹框的确认更新操作按钮显示文字
+                      },
+                      className: "btn-destroy",
+                      //自定义点击操作按钮执行的回调函数
+                      click: function (e) {
+                        var tr = $ (e.target).closest ("tr");
+                        //获取当前行信息（所有字段）
+                        var data = this.dataItem (tr);
+                        console.log (data);
+                      }
+                    }
+                  ]
+                }
+              ]
+            });
+            //手动为列表添加一条信息
+            var grid = $ ("#grid").data ("kendoGrid");
+            grid.dataSource.add ({name: "John Doe", age: 33});
+            //自定义顶部操作按钮事件 .k-grid-custom custom和上面toolbar中定义的name需保持一致
+            $ (".k-grid-custom").click (function (e) {
+              alert (2);
+            });
+            dataSource.read();  //当autoBind: false;时手动绑定数据
+            grid.dataSource.fetch();    //获取列表数据
+            grid.refresh();     //刷新列表方法
+          }
+        }
+      })
+    </script>
+</div>
+</body>
+</html>

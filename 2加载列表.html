@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>1</title>
+
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.rtl.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
+    <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.mobile.all.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-datasource-vue-wrapper/dist/cdn/kendo-datasource-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-popups-vue-wrapper/dist/cdn/kendo-popups-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-buttons-vue-wrapper/dist/cdn/kendo-buttons-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-layout-vue-wrapper/dist/cdn/kendo-layout-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-window-vue-wrapper/dist/cdn/kendo-window-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dropdowns-vue-wrapper/dist/cdn/kendo-dropdowns-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-dateinputs-vue-wrapper/dist/cdn/kendo-dateinputs-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-grid-vue-wrapper/dist/cdn/kendo-grid-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-upload-vue-wrapper/dist/cdn/kendo-upload-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-validator-vue-wrapper/dist/cdn/kendo-validator-vue-wrapper.min.js"></script>
+    <script src="https://unpkg.com/@progress/kendo-inputs-vue-wrapper/dist/cdn/kendo-inputs-vue-wrapper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
+
+</head>
+<body>
+    <div id="example">
+        <div id="app">
+            <!-- <kendo-datasource ref='listData' :schema-model-id="'assetqrcode'"></kendo-datasource> -->
+            <kendo-grid 
+                        :data-source="{
+                          data:listData,
+                          pageSize: 5,
+                          schema: {
+                            model: {
+                              id: 'assetqrcode'
+                            },
+                            total:total()
+                          }
+                        }"
+                        :pageable='pageables'
+                        :filterable="{ multi: true, search:true }"
+                        :sortable='true'
+                        :selectable="true"
+                        :column-menu='true'
+                        :columns="columns"
+                        :sort="sort"
+                        :page="page"
+                        :filter='filter'
+                        :edit='edit'
+                        :change='select'
+                        :schema-model-id="'assetqrcode'"
+                        :toolbar="['create', 'save', 'cancel']"
+                        :editable='{mode: "popup"}'
+                        >
+                        <!-- <kendo-grid-column :selectable="true" :width="120" :editor="select"></kendo-grid-column> -->
+                        <!-- <kendo-grid-column field="useto"></kendo-grid-column> -->
+                        <!-- <kendo-grid-column field="assetqrcode"></kendo-grid-column> -->
+            </kendo-grid>
+        </div>
+    </div>
+
+    <script>
+    new Vue({
+        el: '#app',
+        data: {
+            listData: [],
+            dataSource: {
+                data: [],
+                pageSize: 2,
+                schema: {
+                    model: {
+                        id: "assetqrcode"
+                    }
+                }
+            },
+            pageables: {
+            	input: true,
+                numeric: true,
+                refresh: true,
+                pageSizes: [2, 5, 10, 50],
+                messages: {
+                    display: "{0} - {1} 共 {2} 条数据",
+                    empty: "没有数据",
+                    page: "页",
+                    of: "/ {0}",
+                    itemsPerPage: "条每页",
+                    first: "第一页",
+                    previous: "前一页",
+                    next: "下一页",
+                    last: "最后一页",
+                }
+            },
+            columns: [
+                // "订单列表",
+                { selectable:'row',field: "assetqrcode",width: '40px'},
+                { field: "assetqrcode", title:"订单编号"},
+                { field: "useto", title: "城市"},
+                { field: "usename",title:'客户名称'},
+                { field: "purchasedate",title:'订单日期'},
+                { command: { text:"编辑"},title:'操作'},
+                // { command: 'edit',editor:this.select,title:'操作'},
+            ],
+            kendoDataSource: new kendo.data.DataSource({
+                transport: {
+                    read:  {
+                        url: 'http://60.205.149.65:8004/api/Wangqiming/List',
+                        dataType: 'jsonp',
+                    }
+                },
+                pageSize: 2
+            })
+        },
+        created: function() {
+            this.list();
+        },
+        mounted: function() {
+            
+        },
+        methods: {
+            total(d){
+                debugger;
+                var count = d.count;
+            },
+            list: function() {
+                var url = 'http://60.205.149.65:8004/api/Wangqiming/Lists';
+                this.$http.post(url).then(function(res) {
+                    this.listData = res.data.results;
+                    // $("#grid").kendoGrid({
+                    //     dataSource: {
+                    //         data: this.listData,
+                    //         pageSize: 2,
+                    //         schema: {
+                    //             model: {
+                    //                 id: "assetqrcode"
+                    //             }
+                    //         }
+                    //     }
+                    // });
+                })
+            },
+            parameterMap: function (options, operation) {
+                debugger;
+                if (operation !== 'read' && options.models) {
+                    return { models: kendo.stringify(options.models) }
+                }
+            },
+            sort: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+            	alert('排序回调');
+            },
+            page: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('分页回调');
+            },
+            filter: function(options, operation) {
+                debugger;
+                console.log(options);
+                console.log(operation);
+                alert('过滤回调');
+            },
+            edit: function(options, operation) {
+                console.log(options);
+                console.log(operation);
+                alert('编辑回调');
+            },
+            select: function(options) {
+                console.log(options);
+                var selectList = [];
+                debugger;
+                selectList = options.sender.selectedKeyNames();
+                alert(selectList);
+            }
+        }
+    })
+    </script>
+</body>
+</html>

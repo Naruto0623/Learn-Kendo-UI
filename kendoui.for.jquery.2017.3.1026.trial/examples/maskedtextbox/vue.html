@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vue</title>
+    <meta charset="utf-8">
+    <link href="../content/shared/styles/examples-offline.css" rel="stylesheet">
+    <link href="../../styles/kendo.common.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.rtl.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.min.css" rel="stylesheet">
+    <link href="../../styles/kendo.default.mobile.min.css" rel="stylesheet">
+    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/jszip.min.js"></script>
+    <script src="../../js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+     <script src="https://unpkg.com/@progress/kendo-datasource-vue-wrapper/dist/cdn/kendo-datasource-vue-wrapper.min.js"></script>
+     <script src="https://unpkg.com/@progress/kendo-inputs-vue-wrapper/dist/cdn/kendo-inputs-vue-wrapper.min.js"></script>
+     
+    <script src="../content/shared/js/console.js"></script>
+    <script>
+        
+    </script>
+    
+    
+</head>
+<body>
+    
+        <a class="offline-button" href="../index.html">Back</a>
+    
+    <div id="example">
+    <div id="app">
+        <div class="demo-section k-content" ng-controller="MyCtrl">
+            <ul id="fieldlist">
+                <li>
+                    <h4>Phone number:</h4>
+                    <kendo-maskedtextbox v-model="phone"
+                                         :mask="'(999) 000-0000'">
+                    </kendo-maskedtextbox>
+                    <div class="value">Value: {{phone}}</div>
+                </li>
+                <li>
+                    <h4>Credit Card number:</h4>
+                    <kendo-maskedtextbox v-model="cc"
+                                         :mask="'0000 0000 0000 0000'">
+                    </kendo-maskedtextbox>
+                    <div class="value">Value: {{cc}}</div>
+                </li>
+                <li>
+                    <h4>Social security number:</h4>
+                    <kendo-maskedtextbox v-model="ssn"
+                                         :mask="'000-00-0000'">
+                    </kendo-maskedtextbox>
+                    <div class="value">Value: {{ssn}}</div>
+                </li>
+                <li>
+                    <h4>UK postcode:</h4>
+                    <kendo-maskedtextbox v-model="post"
+                                         :mask="'L0L 0LL'">
+                    </kendo-maskedtextbox>
+                    <div class="value">Value: {{post}}</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            phone: "555 123 4567",
+            cc: "1234 1234 1234 1234",
+            ssn: "003-12-3456",
+            post: "W1N 1AC"
+        }
+    })
+</script>
+
+<style>
+    #fieldlist {
+        margin: 0 0 -2em;
+        padding: 0;
+    }
+
+        #fieldlist li {
+            list-style: none;
+            padding-bottom: 2em;
+        }
+
+        #fieldlist input {
+            width: 100%;
+        }
+
+    .value {
+        padding: .5em 0 0;
+        font-size: 12px;
+    }
+
+    .k-maskedtextbox {
+        width: 100%;
+    }
+</style>
+
+
+    
+</body>
+</html>
