@@ -6,8 +6,9 @@
     <title>Grid-JQ</title>
     <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css" />
     <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css" />
-    <script src="js/jquery-2.2.3.min.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script> -->
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2017.3.1026/styles/kendo.mobile.all.min.css"/>
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
@@ -47,11 +48,6 @@
     //   }
     // }
     // template: "<div class='code' onclick='window.aa(#: assetscoding # )'>#: categoryid # </div>",
-    function aa(item){
-    	debugger;
-    	App.aa = item;
-    	alert(item);
-    }
     var App = new Vue({
         el: '#app',
         data: {
@@ -165,9 +161,9 @@
                         }
                     },
                     schema: {
-                        model: {
-                            id: "categoryid"
-                        },
+                        // model: {
+                        //     id: "categoryid"
+                        // },
                         parse: function(res) {
                             var products = res;
                             return products;
@@ -202,7 +198,7 @@
                     // 	template: "<p>#: name # </p>"
                     // },
                     // toolbar: "<center>资产列表</center>",
-                    toolbar: kendo.template("<div id='box' onclick='aa(this)'>资产列表</div>"),
+                    // toolbar: kendo.template("<div id='box' onclick='aa(this)'>资产列表</div>"),
                     pageable: {
                         input: true, //是否有页码输入框
                         numeric: true,
@@ -266,6 +262,7 @@
                         Vue.selectList = selectList;
                         console.log(selectList);
                     },
+                    mobile: true,
                     columns: [
                     		{
                             selectable: 'row',
