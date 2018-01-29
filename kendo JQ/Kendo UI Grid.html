@@ -79,7 +79,6 @@
                 },
                 //  请求接口前传参函数
                 parameterMap: function (options, operation) {
-                  debugger;
                   if (operation !== "read" && options.models) {
                     var parameter = {
                       page:options.page,
@@ -288,7 +287,8 @@
                   and: "且",
                   or: "或",
                   filter: "过滤",
-                  clear: "清除过滤条件"
+                  clear: "清除过滤条件",
+                  selectedItemsFormat: "选中 {0} 条"
                 }
               },
               //自定义显示文字
