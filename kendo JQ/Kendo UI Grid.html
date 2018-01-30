@@ -6,10 +6,8 @@
     <title>Kendo UI Grid</title>
     <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.common.min.css"/>
     <link rel="stylesheet" href="http://kendo.cdn.telerik.com/2017.3.913/styles/kendo.silver.min.css"/>
-
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="http://kendo.cdn.telerik.com/2017.3.913/js/kendo.all.min.js"></script>
-    
     <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
     <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
 </head>
@@ -37,7 +35,7 @@
         </tr>
     </script>
     <script>
-      new Vue ({
+      new Vue({
         el: "#app",
         data: {
           listData: []
@@ -50,7 +48,7 @@
         },
         methods: {
           grid: function () {
-            var dataSource = new kendo.data.DataSource ({
+            var dataSource = new kendo.data.DataSource({
               //不加载直接绑定数据
               data: [],      //表格数据（访问不到this）
               //加载数据方式
@@ -81,9 +79,9 @@
                 parameterMap: function (options, operation) {
                   if (operation !== "read" && options.models) {
                     var parameter = {
-                      page:options.page,
-                      pageSize:options.pageSize,
-                      models: kendo.stringify (options.models)
+                      page: options.page,
+                      pageSize: options.pageSize,
+                      models: kendo.stringify(options.models)
                     };
                     return parameter;
                   }
@@ -127,7 +125,7 @@
                       id: response[i].ProductID,
                       name: response[i].ProductName
                     };
-                    products.push (product);
+                    products.push(product);
                   }
                   return products;
                 },
@@ -141,7 +139,7 @@
                 }
               }
             });
-            $ ("#grid").kendoGrid ({
+            $("#grid").kendoGrid({
               autoBind: false,      //列表初始化是否自动绑定数据
               dataSource: {
                 data: this.listData,
@@ -179,11 +177,11 @@
                   title: "编辑框的标题",      //编辑框的标题
                   animation: true,          //弹框是否开启动画效果
                   open: function () {       //点击修改的回调函数
-                    alert (2);
+                    alert(2);
                   }
                 },
                 //添加编辑自定义模板
-                template: kendo.template ($ ("#popup-editor").html ()),
+                template: kendo.template($("#popup-editor").html()),
                 confirmation: false,    //不需要确认直接删除
                 createAt: "bottom",     //新建自动插入到列表最后
                 //删除确认弹框自定义文字
@@ -214,7 +212,7 @@
                 landscape: false,   //
                 author: "Jon Don",       //定义导出的excel作者
                 avoidLinks: true,        //放置链接
-                date: new Date ("2014/10/10"),
+                date: new Date("2014/10/10"),
                 margin: {               //设置导出PDF样式
                   left: 10,
                   right: "10pt",
@@ -233,7 +231,7 @@
                 paperSize: "A3",    //excel页面大小
                 author: "Jon Don",       //定义导出的excel作者
                 avoidLinks: true,       //放置链接
-                date: new Date ("2014/10/10"),
+                date: new Date("2014/10/10"),
                 filterable: true,
                 title: "Prudouct",       //导出标题
                 proxyTarget: "_blank"       //导出是否弹出新的空白页
@@ -266,6 +264,27 @@
                   sort: '排序'
                 }
               },
+              //过滤隐藏列回调函数
+              columnHide: function (e) {
+                console.log(e.column.field);
+              },
+              //过滤显示列回调函数
+              columnShow: function (e) {
+                console.log(e.column.field);
+              },
+              //列菜单初始化回调函数，可以自定义过滤菜单
+              columnMenuInit: function (e) {
+                console.dir(e);
+                console.dir(this);
+                var menu = e.container.find(".k-menu").data("kendoMenu");
+                var field = e.field;
+                menu.append({text: "Custom"});
+                menu.bind("select", function (e) {
+                  if ($(e.item).text() == "Custom") {
+                    console.log("Custom button for", field);
+                  }
+                });
+              },
               filterable: {
                 'mode': 'row',        //单列文本框搜索
                 'multi': true,      //行过滤时是否多选
@@ -274,11 +293,11 @@
                 'ui': "datetimepicker",    //时间过滤
                 extra: false,
                 operators: {
-                    string: {
-                        startswith: "Starts with",
-                        eq: "Is equal to",
-                        neq: "Is not equal to"
-                    }
+                  string: {
+                    startswith: "Starts with",
+                    eq: "Is equal to",
+                    neq: "Is not equal to"
+                  }
                 },
                 //搜索框过滤的自定义信息
                 'messages': {
@@ -306,13 +325,13 @@
                 }
               },
               //定义所有行的html模板
-              rowTemplate: kendo.template ($ ("#template").html ()),
+              rowTemplate: kendo.template($("#template").html()),
               //inline行内编辑的回调函数
               editor: function (container, options) {
-                var input = $ ("<input/>");
-                input.attr ("name", options.field);
-                input.appendTo (container);
-                input.kendoAutoComplete ({
+                var input = $("<input/>");
+                input.attr("name", options.field);
+                input.appendTo(container);
+                input.kendoAutoComplete({
                   dataTextField: "name",
                   dataSource: [
                     {name: "Jane Doe"},
@@ -325,32 +344,32 @@
                 if (e.values.name) {
                   // the user changed the name field
                   if (e.values.name != e.model.name) {
-                    console.log ("name is modified");
+                    console.log("name is modified");
                   }
                 }
               },
               //顶部保存列表所有操作回调函数
               saveChanges: function (e) {
-                if (!confirm ("确定保存?")) {
-                  e.preventDefault ();
+                if (!confirm("确定保存?")) {
+                  e.preventDefault();
                 }
               },
               //取消编辑关闭编辑模态框回调函数
               cancel: function (e) {
                 var itme = e.model;     //当前被选中条信息
-                console.log (itme);
-                console.log (e.preventDefault ());
+                console.log(itme);
+                console.log(e.preventDefault());
               },
               //选中当前行获取选中id信息，配合dataSource.schema.model.id中所绑定的值使用
               change: function () {
-                var selectList = this.selectedKeyNames ();
+                var selectList = this.selectedKeyNames();
                 Vue.selectList = selectList;
               },
               pdfExport: function (e) {      //导出PDF后的回调函数
-                e.promise.progress (function (e) {
-                  console.log (kendo.format ("{0:P} complete", e.progress));
-                }).done (function () {
-                  alert ("Export completed!");
+                e.promise.progress(function (e) {
+                  console.log(kendo.format("{0:P} complete", e.progress));
+                }).done(function () {
+                  alert("Export completed!");
                 });
               },
               excelExport: function (e) {
@@ -360,6 +379,48 @@
                 {
                   selectable: true,
                   width: "50px"
+                },
+                {
+                  title: '资产使用信息',
+                  headerAttributes: {
+                    style: 'text-align: center;font-weight:600;'
+                  },
+                  columns: [
+                    {
+                      title: '现使用人',
+                      field: 'usename',
+                      width: '150px'
+                    },
+                    {
+                      title: '现使用部门',
+                      field: 'departments',
+                      width: '150px',
+                      filterable: {
+                        'multi': true,
+                        'checkAll': true,
+                        dataSource: {}
+                      }
+                    },
+                    {
+                      title: '现使用地',
+                      field: 'usetoname',
+                      width: '150px',
+                      filterable: {
+                        'multi': true,
+                        'checkAll': true,
+                        dataSource: {}
+                      }
+                    },
+                    {
+                      title: '领用时间',
+                      field: 'recipientsdate',
+                      width: '150px',
+                      filterable: {
+                        ui: "datepicker"
+                      },
+                      format: "{0:yyyy-MM-dd}"
+                    }
+                  ]
                 },
                 {
                   field: "assetvalue",      //绑定字段名
@@ -378,8 +439,14 @@
                     "class": "table-cell",
                     "style": "text-align: center;color: red; font-size: 14px"
                   },
-                  attributes: { style: "#=isgen === true ? 'color:red;' : ''#" },
+                  attributes: {style: "#=isgen === true ? 'color:red;' : ''#"},
                   template: "<strong>#=linelevel == 1 ? '是' : '否' # </strong>"       //自定义此列标签
+                },
+                {
+                  title: '照片',
+                  field: 'imageuploadurl',
+                  template: "<div class='assetImg' onclick='window.openImg(&\\#34;#: imageuploadurl #&\\#34;)' ><img height='50px' width='100%' src=# if(data.imageuploadurl == null || data.imageuploadurl == ''){#'http://ezg.lenovo.com.cn:8001/upload/defultImg.png'#} else {#'#: imageuploadurl#'#} #></div>",
+                  width: '150px'
                 },
                 {
                   title: "操作",      //命令栏标题
@@ -394,10 +461,10 @@
                       className: "btn-destroy",
                       //自定义点击操作按钮执行的回调函数
                       click: function (e) {
-                        var tr = $ (e.target).closest ("tr");
+                        var tr = $(e.target).closest("tr");
                         //获取当前行信息（所有字段）
-                        var data = this.dataItem (tr);
-                        console.log (data);
+                        var data = this.dataItem(tr);
+                        console.log(data);
                       }
                     }
                   ]
@@ -405,15 +472,20 @@
               ]
             });
             //手动为列表添加一条信息
-            var grid = $ ("#grid").data ("kendoGrid");
-            grid.dataSource.add ({name: "John Doe", age: 33});
+            var grid = $("#grid").data("kendoGrid");
+            grid.dataSource.add({name: "John Doe", age: 33});
             //自定义顶部操作按钮事件 .k-grid-custom custom和上面toolbar中定义的name需保持一致
-            $ (".k-grid-custom").click (function (e) {
-              alert (2);
+            $(".k-grid-custom").click(function (e) {
+              alert(2);
             });
-            dataSource.read();  //当autoBind: false;时手动绑定数据
-            grid.dataSource.fetch();    //获取列表数据
-            grid.refresh();     //刷新列表方法
+            //当autoBind: false;时手动绑定数据
+            gird.dataSource.read();
+            //获取列表数据
+            grid.dataSource.fetch();
+            //刷新列表方法
+            grid.refresh();
+            //初始化加载列表的时候隐藏某一列配合columnHide回调函数一起使用
+            grid.hideColumn("age");
           }
         }
       })
